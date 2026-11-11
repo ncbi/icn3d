@@ -39,7 +39,8 @@ class ResizeCanvas {
                 let width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
                 let height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
 
-                if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
+                // if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
+                if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height, true, true);
             });
         }
     }

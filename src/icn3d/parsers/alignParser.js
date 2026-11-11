@@ -159,8 +159,8 @@ class AlignParser {
                     //var scale = data2.transform.scale / factor;
                     let tMaster = data2.transform.translate.master;
                     let tMVector = new THREE.Vector3(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
-                    let tSlave = data2.transform.translate.slave;
-                    let tSVector = new THREE.Vector3(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
+                    let tQuery = data2.transform.translate.slave; // actually means query protein
+                    let tSVector = new THREE.Vector3(tQuery[0] / factor, tQuery[1] / factor, tQuery[2] / factor);
                     let rotation = data2.transform.rotate;
                     let rMatrix = [];
                     for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements

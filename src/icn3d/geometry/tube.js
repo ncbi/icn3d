@@ -346,6 +346,8 @@ class Tube {
 
         let prevAxis1 = new THREE.Vector3(), prevAxis2;
         for (let i = 0, lim = pnts.length; i < lim; ++i) {
+            if(!pnts[i]) continue;
+            
             let r, idx = (i - 1) * axisDivInv;
 
             if (i === 0) {
@@ -378,7 +380,7 @@ class Tube {
             }
 
             let delta, axis1, axis2;
-            if (i < lim - 1) {
+            if (i < lim - 1 && pnts[i + 1]) {
                 delta = pnts[i].clone().sub(pnts[i + 1]);
                 axis1 = new THREE.Vector3(0, -delta.z, delta.y).normalize().multiplyScalar(r);
                 axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);

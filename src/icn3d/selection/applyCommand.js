@@ -173,6 +173,16 @@ class ApplyCommand {
         ic.opts['unitcell'] = 'no';
         ic.drawCls.draw();
       }
+      else if(command.indexOf('define unitcell') !== -1) {
+        let itemArray = command.split(' | ');
+        ic.cell = {};
+        ic.cell.length_a = parseFloat(itemArray[1]);
+        ic.cell.length_b = parseFloat(itemArray[2]);
+        ic.cell.length_c = parseFloat(itemArray[3]);
+        ic.cell.angle_alpha = parseFloat(itemArray[4]);
+        ic.cell.angle_beta = parseFloat(itemArray[5]);
+        ic.cell.angle_gamma = parseFloat(itemArray[6]);
+      }
       else if(command == 'set fog on') {
         ic.opts['fog'] = 'yes';
         ic.fogCls.setFog(true);
@@ -203,7 +213,7 @@ class ApplyCommand {
         let pos = command.lastIndexOf(' ');
         let supercell = parseInt(command.substr(pos + 1));
 
-        await me.htmlCls.clickMenuCls.setSupercell(supercell);
+        me.htmlCls.clickMenuCls.setSupercell(supercell);
       }
       else if(command == 'set chemicalbinding show') {
         ic.setOptionCls.setOption('chemicalbinding', 'show');
@@ -638,7 +648,8 @@ class ApplyCommand {
       else if(commandOri.indexOf('select interaction') == 0) {
         let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) {
-            let mmdbid = idArray[0].split('_')[0];
+            let itemArray = me.utilsCls.getIdArray(idArray[0]);
+            let mmdbid = itemArray[0];
             if(!ic.b2DShown) ic.ParserUtilsCls.download2Ddgm(mmdbid.toUpperCase());
 
             ic.diagram2dCls.selectInteraction(idArray[0], idArray[1]);

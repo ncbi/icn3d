@@ -42,15 +42,15 @@ class LoadCIF {
     loadCIF(bcifData, bcifid, bText, bAppend, supercell) { let ic = this.icn3d, me = ic.icn3dui;
         ic.cifText = bText;
         ic.cifData = bcifData;
-        
+
         if(supercell === undefined) {
-            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
         }
         else if(supercell === 0) {
-            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: false };
+            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
         }
         else {
-            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true };
+            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
         }
 
         let hAtoms = {};
@@ -66,7 +66,7 @@ class LoadCIF {
         let serial, moleculeNum;
         // if(!bMutation && !bAppend) {
         if(!bAppend) {
-            ic.init();
+            ic.init(undefined, true); // keep original configurations, such as color, style, etc. when loading multiple structures
             moleculeNum = 0; //1;
             serial = 0;
         }
@@ -118,11 +118,13 @@ class LoadCIF {
 
             if (parsed.isError) {
                 // report error:
-                alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+                alert("2 The Binary CIF data can NOT be parsed: " + parsed.toString());
                 return;
             }
 
             let block = parsed.result.dataBlocks[0];
+
+            if(!block) continue;
             
             if(block.getCategory("_entry")) {
                 id = block.getCategory("_entry").getColumn("id").getString(0);
@@ -366,6 +368,8 @@ class LoadCIF {
                 ic.cell.angle_alpha = parseFloat(block.getCategory("_cell").getColumn("angle_alpha").getString(0));
                 ic.cell.angle_beta = parseFloat(block.getCategory("_cell").getColumn("angle_beta").getString(0));
                 ic.cell.angle_gamma = parseFloat(block.getCategory("_cell").getColumn("angle_gamma").getString(0));
+
+                me.htmlCls.clickMenuCls.setLogCmd("define unitcell | " + ic.cell.length_a + " | " + ic.cell.length_b + " | " + ic.cell.length_c + " | " + ic.cell.angle_alpha + " | " + ic.cell.angle_beta + " | " + ic.cell.angle_gamma, true);
             }
 
             // if (record === 'ENDMDL') {
@@ -481,7 +485,7 @@ class LoadCIF {
             let prevModelNum = '';
             if(!ic.molid2chain) ic.molid2chain = {};
             
-            let mName2Serial = {}, mId2Set = {};
+            let mName2Serial = {};
 
             for (let i = 0; i < atomSize; ++i) {
                 let modelNum = modelNumArray.getString(i);
@@ -718,7 +722,7 @@ class LoadCIF {
                     
                 // if(oriResidueNum !== prevOriResidueNum) {
                 if(oriResidueNum !== prevOriResidueNum || chain + "_" + resn != prevResn || prevAutochain != autochain) {
-                    let residue = me.utilsCls.residueName2Abbr(resn);
+                    let residue = (atomDetails.het) ? me.utilsCls.residueName2Abbr(resn) : me.utilsCls.residueName2Abbr(resn, true);
                    
                     ic.residueId2Name[residueNum] = residue;
 

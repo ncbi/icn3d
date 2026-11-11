@@ -1341,13 +1341,33 @@ var CIFTools;
         /**
          * Options for filling the unit cell of a core CIF by lattice translation
          * (applied after the symmetry operators have generated the contents of one cell).
-         *   nx, ny, nz : number of unit cells along a, b, c (supercell); default 1 1 1
-         *   boundary   : also emit the periodic image of every atom lying on a cell face/edge/corner
-         *                (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl); default true.
-         *                Set to false to get the original behavior (atoms wrapped into [0,1) only).
-         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, boundary: true};
+         *   nx, ny, nz     : number of unit cells along a, b, c (supercell); default 1 1 1
+         *   wholeMolecules : keep every molecule / discrete chemical species intact. Atoms are grouped into
+         *                    bonded fragments (covalent radii + bondTolerance, periodic), each fragment is
+         *                    "unwrapped" so that it is contiguous (it may stick out of the unit cell), and the
+         *                    fragment is placed in the cell that contains its centre. Fragments that are
+         *                    infinite (chains, layers, frameworks, ionic lattices such as NaCl) cannot be made
+         *                    whole and are handled as before (wrapped into the cell, see 'boundary'). default true
+         *   bondTolerance  : extra distance (Angstrom) added to the sum of covalent radii when detecting bonds; default 0.4
+         *   boundary       : for atoms that are NOT part of a whole molecule, also emit the periodic image of every
+         *                    atom lying on a cell face/edge/corner (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl);
+         *                    default true.
+         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, wholeMolecules: true};
          */
-        Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+        Text.coreCifOptions = {
+            nx: 1, ny: 1, nz: 1,
+            wholeMolecules: true,   // new; set false for the old wrapped behaviour
+            bondTolerance: 0.4,     // new; raise it if bonds are missed, lower it if unrelated atoms get joined, default 0.4
+            boundary: true
+        };
+        // covalent radii (Angstrom, Cordero et al. 2008) used for bond detection
+        var coreCovRadii = { H: 0.31, D: 0.31, He: 0.28, Li: 1.28, Be: 0.96, B: 0.84, C: 0.76, N: 0.71, O: 0.66, F: 0.57, Ne: 0.58,
+            Na: 1.66, Mg: 1.41, Al: 1.21, Si: 1.11, P: 1.07, S: 1.05, Cl: 1.02, Ar: 1.06, K: 2.03, Ca: 1.76, Sc: 1.70, Ti: 1.60, V: 1.53,
+            Cr: 1.39, Mn: 1.39, Fe: 1.32, Co: 1.26, Ni: 1.24, Cu: 1.32, Zn: 1.22, Ga: 1.22, Ge: 1.20, As: 1.19, Se: 1.20, Br: 1.20, Kr: 1.16,
+            Rb: 2.20, Sr: 1.95, Y: 1.90, Zr: 1.75, Nb: 1.64, Mo: 1.54, Tc: 1.47, Ru: 1.46, Rh: 1.42, Pd: 1.39, Ag: 1.45, Cd: 1.44, In: 1.42,
+            Sn: 1.39, Sb: 1.39, Te: 1.38, I: 1.39, Xe: 1.40, Cs: 2.44, Ba: 2.15, La: 2.07, Ce: 2.04, Pr: 2.03, Nd: 2.01, Sm: 1.98, Eu: 1.98,
+            Gd: 1.96, Tb: 1.94, Dy: 1.92, Ho: 1.92, Er: 1.89, Tm: 1.90, Yb: 1.87, Lu: 1.87, Hf: 1.75, Ta: 1.70, W: 1.62, Re: 1.51, Os: 1.44,
+            Ir: 1.41, Pt: 1.36, Au: 1.36, Hg: 1.32, Tl: 1.45, Pb: 1.46, Bi: 1.48 };
         // g: fractional coordinates wrapped into [0,1). Returns all translated copies of g.
         function coreLatticeImages(g, nx, ny, nz, bBoundary) {
             var eps = 1e-3, n = [nx, ny, nz], ranges = [], out = [], k, i, r, x, y, z;
@@ -1362,6 +1382,60 @@ var CIFTools;
                     for (z = 0; z < ranges[2].length; z++)
                         out.push([ranges[0][x], ranges[1][y], ranges[2][z]]);
             return out;
+        }
+        /**
+         * Group atoms (fractional coordinates wrapped into the cell) into bonded fragments, taking periodic
+         * images into account. Every atom of a fragment gets an integer lattice translation T so that
+         * (g + T) forms a contiguous molecule. A fragment that reaches its own periodic image
+         * (chain / layer / framework) is flagged as infinite.
+         *   atoms : [{el, g:[fx,fy,fz]}]   toCart : fractional -> Cartesian (linear part only)
+         *   h     : interplanar spacings of the cell along a, b, c   tol : bond tolerance (Angstrom)
+         */
+        function coreFindMolecules(atoms, toCart, h, tol) {
+            var N = atoms.length, nb = [], rad = [], i, j, k, e, m, q;
+            for (i = 0; i < N; i++) { nb.push([]); rad.push(coreCovRadii[atoms[i].el] || 1.5); }
+            for (i = 0; i < N; i++) {
+                for (j = i; j < N; j++) {
+                    var d = [atoms[j].g[0] - atoms[i].g[0], atoms[j].g[1] - atoms[i].g[1], atoms[j].g[2] - atoms[i].g[2]];
+                    var rc = rad[i] + rad[j] + tol, cand = [[], [], []], dt, t;
+                    for (k = 0; k < 3; k++) {
+                        var base = -Math.round(d[k]);
+                        for (dt = -1; dt <= 1; dt++) {
+                            t = base + dt;
+                            if (Math.abs(d[k] + t) * h[k] <= rc) cand[k].push(t);
+                        }
+                    }
+                    for (var a = 0; a < cand[0].length; a++) for (var b = 0; b < cand[1].length; b++) for (var c = 0; c < cand[2].length; c++) {
+                        var tv = [cand[0][a], cand[1][b], cand[2][c]];
+                        if (i === j) { // bond to own image: record each translation pair only once
+                            if (tv[0] === 0 && tv[1] === 0 && tv[2] === 0) continue;
+                            if (tv[0] < 0 || (tv[0] === 0 && (tv[1] < 0 || (tv[1] === 0 && tv[2] < 0)))) continue;
+                        }
+                        var cc = toCart([d[0] + tv[0], d[1] + tv[1], d[2] + tv[2]]);
+                        var d2 = cc[0] * cc[0] + cc[1] * cc[1] + cc[2] * cc[2];
+                        if (d2 < rc * rc && d2 > 0.25) { // > 0.5 A: closer atoms are disorder alternatives, not bonds
+                            nb[i].push({ j: j, t: tv });
+                            nb[j].push({ j: i, t: [-tv[0], -tv[1], -tv[2]] });
+                        }
+                    }
+                }
+            }
+            var T = new Array(N), comps = [], s, queue, members, infinite, cur, tj, o;
+            for (s = 0; s < N; s++) {
+                if (T[s]) continue;
+                T[s] = [0, 0, 0]; queue = [s]; members = [s]; infinite = false;
+                for (q = 0; q < queue.length; q++) {
+                    cur = queue[q];
+                    for (e = 0; e < nb[cur].length; e++) {
+                        o = nb[cur][e];
+                        tj = [T[cur][0] + o.t[0], T[cur][1] + o.t[1], T[cur][2] + o.t[2]];
+                        if (!T[o.j]) { T[o.j] = tj; queue.push(o.j); members.push(o.j); }
+                        else if (T[o.j][0] !== tj[0] || T[o.j][1] !== tj[1] || T[o.j][2] !== tj[2]) infinite = true;
+                    }
+                }
+                comps.push({ members: members, infinite: infinite });
+            }
+            return { T: T, comps: comps };
         }
         function convertCoreCif(data) {
             var tk = coreTokens(data), i = 0, n = tk.length, single = {}, loops = [], name = 'data_core', t, cols, rows, cur;
@@ -1416,12 +1490,21 @@ var CIFTools;
                 '_atom_site.label_comp_id', '_atom_site.label_asym_id', '_atom_site.label_entity_id', '_atom_site.label_seq_id',
                 '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.occupancy', '_atom_site.B_iso_or_equiv',
                 '_atom_site.auth_seq_id', '_atom_site.auth_asym_id', '_atom_site.pdbx_PDB_model_num');
-            var serial = 0, seen = [], r, s, f, g, k, dup, j, sym, el, lab, cart;
+            var serial = 0, r, s, f, g, k, dup, j, sym, el, lab, cart;
             var o = Text.coreCifOptions || {}, images, im;
             var opt = {
                 nx: Math.max(1, parseInt(o.nx) || 1), ny: Math.max(1, parseInt(o.ny) || 1), nz: Math.max(1, parseInt(o.nz) || 1),
-                boundary: (o.boundary === undefined) ? true : !!o.boundary
+                boundary: (o.boundary === undefined) ? true : !!o.boundary,
+                wholeMolecules: (o.wholeMolecules === undefined) ? true : !!o.wholeMolecules,
+                bondTolerance: (o.bondTolerance === undefined || isNaN(parseFloat(o.bondTolerance))) ? 0.4 : parseFloat(o.bondTolerance)
             };
+            function emit(at, frac) {
+                var cart = toCart(frac);
+                out.push(['HETATM', ++serial, at.el, at.lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
+                    at.occ, '0.00', 1, 'A', 1].join(' '));
+            }
+            // 1) all symmetry-generated atoms of one cell, wrapped into [0,1)
+            var list = [];
             for (r = 0; r < atoms.rows.length; r++) {
                 var row = atoms.rows[r];
                 if (get(row, '_atom_site_calc_flag') === 'dum') continue; // dummy atoms
@@ -1430,6 +1513,7 @@ var CIFTools;
                 sym = get(row, '_atom_site_type_symbol'); if (sym === '?') sym = lab;
                 el = (sym.match(/^[A-Za-z]{1,2}/) || ['X'])[0];
                 el = el.charAt(0).toUpperCase() + el.substr(1).toLowerCase();
+                var occ = coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy'));
                 var mySeen = [];
                 for (s = 0; s < symops.length; s++) {
                     g = symops[s](f).map(function (v) { return v - Math.floor(v + 1e-6); });
@@ -1439,13 +1523,49 @@ var CIFTools;
                     }
                     if (dup) continue;
                     mySeen.push(g);
-                    // fill the cell (and optional supercell) by lattice translation of the symmetry-generated site
-                    images = coreLatticeImages(g, opt.nx, opt.ny, opt.nz, opt.boundary);
-                    for (im = 0; im < images.length; im++) {
-                        cart = toCart(images[im]);
-                        out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
-                            coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    list.push({ el: el, lab: lab, occ: occ, g: g });
+                }
+            }
+            // 2) emit them, either as whole molecules or simply wrapped into the cell
+            var mol = null;
+            if (opt.wholeMolecules && list.length) {
+                var Vc = a * b * cc * vol, sinal = Math.sqrt(1 - cosa * cosa), sinbe = Math.sqrt(1 - cosb * cosb);
+                var hh = [Vc / (b * cc * sinal), Vc / (a * cc * sinbe), Vc / (a * b * sing)];
+                if (isFinite(hh[0] + hh[1] + hh[2]) && hh[0] > 0 && hh[1] > 0 && hh[2] > 0) mol = coreFindMolecules(list, toCart, hh, opt.bondTolerance);
+            }
+            var ci, m, at, ix, iy, iz, mean, shift;
+            if (mol) {
+                for (ci = 0; ci < mol.comps.length; ci++) {
+                    var comp = mol.comps[ci];
+                    if (comp.infinite) { // cannot be made whole: wrap into the cell as before
+                        for (m = 0; m < comp.members.length; m++) {
+                            at = list[comp.members[m]];
+                            images = coreLatticeImages(at.g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                            for (im = 0; im < images.length; im++) emit(at, images[im]);
+                        }
+                        continue;
                     }
+                    // contiguous molecule: place it in the cell that holds its centre, keep all atoms together
+                    mean = [0, 0, 0];
+                    for (m = 0; m < comp.members.length; m++) {
+                        at = list[comp.members[m]];
+                        for (k = 0; k < 3; k++) mean[k] += (at.g[k] + mol.T[comp.members[m]][k]) / comp.members.length;
+                    }
+                    shift = [-Math.floor(mean[0] + 1e-6), -Math.floor(mean[1] + 1e-6), -Math.floor(mean[2] + 1e-6)];
+                    for (ix = 0; ix < opt.nx; ix++) for (iy = 0; iy < opt.ny; iy++) for (iz = 0; iz < opt.nz; iz++) {
+                        for (m = 0; m < comp.members.length; m++) {
+                            at = list[comp.members[m]];
+                            var tt = mol.T[comp.members[m]];
+                            emit(at, [at.g[0] + tt[0] + shift[0] + ix, at.g[1] + tt[1] + shift[1] + iy, at.g[2] + tt[2] + shift[2] + iz]);
+                        }
+                    }
+                }
+            }
+            else {
+                for (m = 0; m < list.length; m++) {
+                    at = list[m];
+                    images = coreLatticeImages(at.g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                    for (im = 0; im < images.length; im++) emit(at, images[im]);
                 }
             }
             out.push('#');
@@ -1746,7 +1866,7 @@ var CIFTools;
                 // This approach to binary parsing wastes a bit of memory to trade for speed compared to:
                 //
                 //   let value = buffer.subarray(offset, offset + length); //new Uint8Array(buffer.buffer, offset, length);
-                // 
+                //
                 // It turns out that using the view created by subarray probably uses DataView
                 // in the background, which causes the element access to be several times slower
                 // than creating the new byte array.
@@ -3070,7 +3190,7 @@ var CIFTools;
                     if (index === void 0) {
                         // increment the length
                         accLength += s.length;
-                        // store the string and index                   
+                        // store the string and index
                         index = strings.length;
                         strings[index] = s;
                         map[s] = index;

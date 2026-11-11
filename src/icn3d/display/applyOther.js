@@ -43,9 +43,9 @@ class ApplyOther {
                 }
             }
 
-            ic.lineCls.createLines(ic.lines);
-            if(!ic.planes) ic.planes = [];
-            ic.cylinderCls.createPlanes(ic.planes);
+            // ic.lineCls.createLines(ic.lines);
+            // if(!ic.planes) ic.planes = [];
+            // ic.cylinderCls.createPlanes(ic.planes);
     //    }
 
         // distance sets
@@ -168,6 +168,10 @@ class ApplyOther {
                 ic.pk = 3;
                 break;
         }
+
+        ic.lineCls.createLines(ic.lines);
+        if(!ic.planes) ic.planes = [];
+        ic.cylinderCls.createPlanes(ic.planes);
     }
 
     applyChemicalbindingOptions(options) { let ic = this.icn3d, me = ic.icn3dui;

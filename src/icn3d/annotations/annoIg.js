@@ -206,7 +206,8 @@ class AnnoIg {
                 let residArray = Object.keys(residHash);
 
                 // delete the following loops
-                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[residArray.length - 1].split('_')[2]);
+                let idArray = me.utilsCls.getIdArray(residArray[residArray.length - 1]);
+                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, idArray[2]);
 
                 for(let j = lastPos + 1, jl = ic.chainsSeq[chnid].length; j < jl; ++j) {
                     let resi = ic.chainsSeq[chnid][j].resi;
@@ -222,7 +223,8 @@ class AnnoIg {
                 }
 
                 // delete the previous loops
-                let firstPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[0].split('_')[2]);
+                idArray = me.utilsCls.getIdArray(residArray[0]);
+                let firstPos = ic.setSeqAlignCls.getPosFromResi(chnid, idArray[2]);
 
                 for(let j = lastPos - 1; j >= 0; --j) {
                     let resi = ic.chainsSeq[chnid][j].resi;

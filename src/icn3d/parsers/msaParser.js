@@ -81,9 +81,8 @@ class MsaParser {
 
             // realign based on residue by residue
             let alignment_final = ic.inputChainidArray.join(',');
-
             if(predefinedres && (alignment_final.split(',').length - 1) != predefinedres.split(': ').length) {
-                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                alert("Please make sure the number of chains " + (alignment_final.split(',').length - 1) + " and the lines of predefined residues " + predefinedres.split(': ').length + " are the same...");
                 return;
             }
 
@@ -141,7 +140,7 @@ class MsaParser {
             }
 
             if(type == 'clustalw') {
-                if(line.substr(0, 1) != ' ' && line.substr(0, 1) != '\t') {
+                if(line.substr(0, 1) != '.' && line.substr(0, 1) != '*') {
                     let chainid_seq = line.split(/\s+/);
                     let idArray = chainid_seq[0].split('|');
                     let result = this.getChainid(idArray, bStart && !bSecBlock);
@@ -166,9 +165,11 @@ class MsaParser {
                     seq = '';
 
                     let pos = line.indexOf(' ');
+                    if(pos == -1) pos = line.length;
                     let idArray = line.substr(1, pos).split('|');
-                    
+                   
                     if(idArray.length == 1) {
+                        bFound = true;
                         chainid = idArray[0];
                     }
                     else {
@@ -232,8 +233,9 @@ class MsaParser {
                 ic.inputChainidArray.push(chainid + '_A');
             }
         }
-        else if(chainid.indexOf('_') != -1) { // PDB ID
-            let stru = chainid.substr(0, chainid.indexOf('_')).substr(0, 4);
+        else if(chainid.indexOf('_') != -1 || chainid.indexOf('pdb_') != -1) { // PDB ID
+            let idArray = me.utilsCls.getIdArray(chainid);
+            let stru = idArray[0];
             ic.struArray.push(stru);
             ic.inputChainidArray.push(chainid);
         }

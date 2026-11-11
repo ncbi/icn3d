@@ -138,6 +138,8 @@ class Impostor {
 
         let shiness = ic.shininess / 100.0 * 0.5;
 
+        let fogRGB = background.clone().convertLinearToSRGB();
+
         ic.uniforms = THREE.UniformsUtils.merge([
           THREE.UniformsLib.common,
           {
@@ -158,7 +160,8 @@ class Impostor {
             nearClip: { type: "f", value: nearClip },
             ortho: { type: "f", value: 0.0 },
             shrink: { type: "f", value: 0.13 },
-            fogColor: { type: "v3", value: [background.r, background.g, background.b] },
+            //fogColor: { type: "v3", value: [background.r, background.g, background.b] },
+            fogColor: { type: "v3", value: [fogRGB.r, fogRGB.g, fogRGB.b] },
             fogNear: { type: "f", value: near },
             fogFar: { type: "f", value: far },
             fogDensity: { type: "f", value: 2.0 }

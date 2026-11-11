@@ -193,7 +193,6 @@ class Surface {
             let chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
             html += '<tr>' + structureStr + chainStr + '<th>Residue</th><th>Number</th><th>SASA (&#8491;<sup>2</sup>)</th><th>Percent Out</th><th>In/Out</th></tr>';
             for(let resid in ic.resid2area) {
-                //var idArray = resid.split('_');
                 let pos = resid.lastIndexOf('_');
                 let resn = resid.substr(pos + 1);
 

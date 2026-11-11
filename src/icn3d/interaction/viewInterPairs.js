@@ -472,7 +472,7 @@ class ViewInterPairs {
             residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
 
             // stru_chain_resi_resn
-            let ids = residname1.split('_');
+            let ids = me.utilsCls.getIdArray(residname1);
             if(i > 0 && residname1 != prevResidname1) {
                 bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 

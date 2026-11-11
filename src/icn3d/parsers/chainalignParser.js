@@ -51,44 +51,6 @@ class ChainalignParser {
             // calculate secondary structures with applyCommandDssp
             //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 await ic.pdbParserCls.applyCommandDssp(true);
-//!!!
-/*
-                // original version =============
-                // align PDB chains
-                for(let index in ic.pdbChainIndexHash) {
-                    //ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
-                    let idArray = ic.pdbChainIndexHash[index].split('_');
-                    mmdbid_q = idArray[0];
-                    let chain_q = idArray[1];
-                    mmdbid_t = idArray[2];
-                    let chain_t = idArray[3];
-
-                    thisClass.transformStructure(mmdbid_q, index-1, 'query');                
-                }
-
-                // dynamically align pairs in ic.afChainIndexHash
-                let ajaxArray = [], indexArray = [], struArray = [];
-                let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
-                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-
-                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
-
-                for(let index in ic.afChainIndexHash) {
-                    let idArray = ic.afChainIndexHash[index].split('_');
-                    mmdbid_q = idArray[0];
-                    let chain_q = idArray[1];
-                    let chainid_q = mmdbid_q + '_' + chain_q;
-
-                    mmdbid_t = idArray[2];
-                    let chain_t = idArray[3];
-                    let chainid_t = mmdbid_t + '_' + chain_t;
-
-                    // let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t, true).hAtoms : ic.chains[chainid_t];
-                    // let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q, true).hAtoms : ic.chains[chainid_q];
-                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainid_t, true).hAtoms : ic.chains[chainid_t];
-                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainid_q, true).hAtoms : ic.chains[chainid_q];
-                // end of original version =============
-*/                
 
                 // new version to be done for VASTsrv ==============
                 // dynamically align pairs in all chainids
@@ -564,7 +526,7 @@ class ChainalignParser {
     addPostfixForStructureids(structArray) { let ic = this.icn3d, me = ic.icn3dui;
         let struct2cnt = {};
         for(let i = 0, il = structArray.length; i < il; ++i) {
-            if(structArray[i].toLowerCase().toLowerCase().substr(0,8) == 'pdb_0000') structArray[i] = structArray[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+            if((me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined) && structArray[i].toLowerCase().toLowerCase().substr(0,8) == 'pdb_0000') structArray[i] = structArray[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
 
             let struct = structArray[i].toUpperCase(); 
 
@@ -588,6 +550,8 @@ class ChainalignParser {
 
         ic.opts['proteins'] = 'c alpha trace';
 
+        if(!chainalign) return;
+        
         let alignArray = chainalign.split(',');
         let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
         if(domainArray.length < alignArray.length) domainArray = [];
@@ -660,7 +624,7 @@ class ChainalignParser {
                 let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
                 // TM-align (me.cfg.aligntool == 'tmalign') needs to input PDB
-                if(me.cfg.aligntool != 'tmalign' && ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+                if(me.cfg.aligntool != 'tmalign' && (ic.mmdbid_t.length == 4 || ic.mmdbid_t.indexOf('pdb_') == 0) && (ic.mmdbid_q.length == 4 || ic.mmdbid_q.indexOf('pdb_') == 0)) {
                     let urlalign;
                     
                     if(domainArray.length > 0) {
@@ -950,7 +914,7 @@ class ChainalignParser {
         }
         else {
             for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-                if(structArrayTmp[i].toLowerCase().substr(0,8) == 'pdb_0000') structArrayTmp[i] = structArrayTmp[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+                if((me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined) && structArrayTmp[i].toLowerCase().substr(0,8) == 'pdb_0000') structArrayTmp[i] = structArrayTmp[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
 
                 let id = structArrayTmp[i].toUpperCase();
                 if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);

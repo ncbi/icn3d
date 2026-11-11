@@ -681,8 +681,8 @@ class iCn3D {
 };
 
 //When users first load a structure, call this function to empty previous settings.
-iCn3D.prototype.init = function (bKeepCmd) {
-    this.init_base();
+iCn3D.prototype.init = function (bKeepCmd, bKeepConfig) {
+    this.init_base(bKeepCmd, bKeepConfig);
 
     this.molTitle = "";
 
@@ -702,8 +702,8 @@ iCn3D.prototype.init = function (bKeepCmd) {
     this.axes = [];
 };
 
-iCn3D.prototype.init_base = function (bKeepCmd) {
-    this.resetConfig();
+iCn3D.prototype.init_base = function (bKeepCmd, bKeepConfig) {
+    if(!bKeepConfig) this.resetConfig();
     
     this.structures = {}; // structure name -> array of chains
     this.chains = {}; // structure_chain name -> atom hash

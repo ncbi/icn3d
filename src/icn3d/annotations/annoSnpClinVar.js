@@ -161,8 +161,9 @@ class AnnoSnpClinVar {
         let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chnid]);
         // for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
         for(let resid in residHash) {
-            let i = resid.split('_')[2];
-            
+            let idArray = me.utilsCls.getIdArray(resid);
+            let i = idArray[2];
+
             if(resi2index[i] !== undefined) {            
                 ++snpCnt;
                 let snpType = '', allDiseaseTitle = '';

@@ -625,24 +625,6 @@
                 if(!me.bNode) console.log("domainid: " + domainid);
             }
 
-            // count the number of matched strands
-            // let strandHash = {};
-            // for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
-            //     let seg = queryData[0].segs[j];
-            //     let q_start = parseInt(seg.q_start)
-
-            //     let strand = this.getStrandFromRefnum(q_start);
-            //     strandHash[strand] = 1;
-            // }
-
-            // let tmAdjust = 0.1; 
-
-            // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
-            // if(!domainid2segs.hasOwnProperty(domainid) || 
-            //     (score >= parseFloat(ic.domainid2score[domainid].split('_')[0]) + tmAdjust)
-            //     || (score >= parseFloat(ic.domainid2score[domainid].split('_')[0]) - tmAdjust && score < parseFloat(ic.domainid2score[domainid].split('_')[0]) + tmAdjust && Object.keys(strandHash).length > domainid2strandcnt[domainid])
-            //     ) {
-
             // use TM-score alone
             if(!domainid2segs.hasOwnProperty(domainid) || score >= parseFloat(ic.domainid2score[domainid].split('_')[0])) {      
                 ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res + '_' + queryData[0].score2;

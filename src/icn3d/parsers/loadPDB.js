@@ -460,7 +460,7 @@ class LoadPDB {
                 //if(residueNum !== prevResidueNum) {
                     
                 if(oriResidueNum !== prevOriResidueNum) {
-                    let residue = me.utilsCls.residueName2Abbr(resn);
+                    let residue = (atomDetails.het) ? me.utilsCls.residueName2Abbr(resn) : me.utilsCls.residueName2Abbr(resn, true);
                     ic.residueId2Name[residueNum] = residue;
 
                     if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;
@@ -912,7 +912,7 @@ class LoadPDB {
 
         for(let chainid in chains) {
             if(pdbid !== undefined) {
-                let textArray =  chainid.split('_');
+                let textArray =  me.utilsCls.getIdArray(chainid);
                 if(textArray[0] !== pdbid) continue; // skip different chain
             }
 

@@ -88,6 +88,9 @@
           else if(cfg.mmcifid !== undefined) {
               await setupViewer('mmcifid', cfg.mmcifid, cfg);
           }
+          else if(cfg.codid !== undefined) {
+              await setupViewer('codid', cfg.codid, cfg);
+          }
           else if(cfg.mmdbid !== undefined) {
               await setupViewer('mmdbid', cfg.mmdbid, cfg);
           }

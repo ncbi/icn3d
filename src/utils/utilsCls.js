@@ -119,7 +119,7 @@ class UtilsCls {
     }
 
     //Convert a three-letter residue name to a one-letter residue abbreviation, e.g., 'LYS' to 'K', or ' A' to 'A' for nucleotides.
-    residueName2Abbr(residueName) { let me = this.icn3dui;
+    residueName2Abbr(residueName, bOneLetter) { let me = this.icn3dui;
       let pos = residueName.indexOf(' ');
       if(pos > 0) {
           residueName = residueName.substr(0, pos);
@@ -255,7 +255,12 @@ class UtilsCls {
           break;
 
         default:
-          return residueName.trim();
+          if(bOneLetter) {
+            return 'X';
+          }
+          else {
+            return residueName.trim();
+          }
       }
     }
 
@@ -352,15 +357,20 @@ class UtilsCls {
     }
 
     getIdArray(resid) { let me = this.icn3dui;
-        //var idArray = resid.split('_');
         let idArray = [];
 
         if(resid) {
-            let pos1 = resid.indexOf('_');
-            let pos2 = resid.lastIndexOf('_');
-            idArray.push(resid.substr(0, pos1));
-            idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
-            idArray.push(resid.substr(pos2 + 1));
+          let itemArray = resid.split('_');
+
+          if(resid.indexOf('pdb_') == 0 ) { // e.g., pdb_00001GPK_A_15
+            idArray.push(itemArray[0] + '_' + itemArray[1]);
+            for(let i = 2, il = itemArray.length; i < il; ++i) {
+              idArray.push(itemArray[i]);
+            }
+          }
+          else {
+            idArray = itemArray;
+          }
         }
 
         return idArray;
@@ -371,12 +381,12 @@ class UtilsCls {
       let bArray = b.split(',');
       let aIdArray, bIdArray;
       if(type == 'save1') {
-        aIdArray = me.utilsCls.getIdArray(aArray[0]); //aArray[0].split('_');
-        bIdArray = me.utilsCls.getIdArray(bArray[0]); //bArray[0].split('_');
+        aIdArray = me.utilsCls.getIdArray(aArray[0]); 
+        bIdArray = me.utilsCls.getIdArray(bArray[0]); 
       }
       else if(type == 'save2') {
-        aIdArray = me.utilsCls.getIdArray(aArray[1]); //aArray[1].split('_');
-        bIdArray = me.utilsCls.getIdArray(bArray[1]); //bArray[1].split('_');
+        aIdArray = me.utilsCls.getIdArray(aArray[1]); 
+        bIdArray = me.utilsCls.getIdArray(bArray[1]); 
       }
       let aChainid = aIdArray[0] + '_' + aIdArray[1];
       let bChainid = bIdArray[0] + '_' + bIdArray[1];

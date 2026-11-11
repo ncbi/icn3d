@@ -173,7 +173,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.54.3';
+    this.REVISION = '3.54.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -375,7 +375,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let domainidArray = me.cfg.matchedchains.split(',');
             let chainidArray = [];
             for(let i = 0, il = domainidArray.length; i  < il; ++i) {
-                let idArray = domainidArray[i].split('_');
+                let idArray = me.utilsCls.getIdArray(domainidArray[i]);
                 chainidArray.push(idArray[0] + '_' + idArray[1]);
             }
 
@@ -418,14 +418,14 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         await ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
     }
     else if(me.cfg.mmtfid !== undefined) {
-        if(me.cfg.mmtfid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmtfid = me.cfg.mmtfid.substr(8); // temperary support long PDB ID such as pdb_00001tup
+        // if(me.cfg.mmtfid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmtfid = me.cfg.mmtfid.substr(8); // temperary support long PDB ID such as pdb_00001tup
        ic.inputid = me.cfg.mmtfid;
        ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        await ic.bcifParserCls.downloadBcif(me.cfg.mmtfid);
     }
     else if(me.cfg.bcifid !== undefined) {
-        if(me.cfg.bcifid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.bcifid = me.cfg.bcifid.substr(8); // temperary support long PDB ID such as pdb_00001tup
+        // if(me.cfg.bcifid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.bcifid = me.cfg.bcifid.substr(8); // temperary support long PDB ID such as pdb_00001tup
         ic.inputid = me.cfg.bcifid;
         ic.loadCmd = 'load bcif ' + me.cfg.bcifid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -600,6 +600,12 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
     }
+    else if(me.cfg.codid !== undefined) {
+        ic.inputid = me.cfg.codid;
+        ic.loadCmd = 'load cod ' + me.cfg.codid;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.mmcifParserCls.downloadCod(me.cfg.codid);
+    }
     else if(me.cfg.align !== undefined) {
         // ic.bNCBI = true;
         if(me.cfg.align.indexOf('185055,') != -1) {
@@ -762,6 +768,8 @@ iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, 
 
                    reject('error');
                 }
+
+                me.icn3d.ParserUtilsCls.hideLoading();
             }
             else {
                 me.icn3d.ParserUtilsCls.showLoading();
@@ -913,18 +921,6 @@ iCn3DUI.prototype.setDialogAjax = function() { let me = this;
         }
     });
 };
-
-/*
-iCn3DUI.prototype.setIcn3dui = function(id) { let me = this;
-    let idArray = id.split('_'); // id: div0_reload_pdbfile
-    ic.pre = idArray[0] + "_";
-    if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
-       me = window.icn3duiHash[idArray[0]];
-    }
-    return me;
-};
-*/
-
 
 // required by npm
 class printMsg {

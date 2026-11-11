@@ -172,7 +172,8 @@ $NGL_shaderTextHash['SphereImpostor.frag'] = ["#define STANDARD",
 "                float depth = gl_FragCoord.z / gl_FragCoord.w;",
 "            #endif",
 "            #ifdef FOG_EXP2",
-"                float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * depth * depth * LOG2 ) );",
+"                //float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * depth * depth * LOG2 ) );",
+"                float fogFactor = ( 1.0 - exp2( - fogDensity * fogDensity * depth * depth * 1.442695 ) );",
 "            #else",
 "                float fogFactor = smoothstep( fogNear, fogFar, depth );",
 "            #endif",
@@ -636,7 +637,8 @@ $NGL_shaderTextHash['CylinderImpostor.frag'] = ["#define STANDARD",
 "                float depth = gl_FragCoord.z / gl_FragCoord.w;",
 "            #endif",
 "            #ifdef FOG_EXP2",
-"                float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * depth * depth * LOG2 ) );",
+"                //float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * depth * depth * LOG2 ) );",
+"                float fogFactor = ( 1.0 - exp2( - fogDensity * fogDensity * depth * depth * 1.442695 ) );",
 "            #else",
 "                float fogFactor = smoothstep( fogNear, fogFar, depth );",
 "            #endif",
@@ -2606,13 +2608,33 @@ var CIFTools;
         /**
          * Options for filling the unit cell of a core CIF by lattice translation
          * (applied after the symmetry operators have generated the contents of one cell).
-         *   nx, ny, nz : number of unit cells along a, b, c (supercell); default 1 1 1
-         *   boundary   : also emit the periodic image of every atom lying on a cell face/edge/corner
-         *                (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl); default true.
-         *                Set to false to get the original behavior (atoms wrapped into [0,1) only).
-         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, boundary: true};
+         *   nx, ny, nz     : number of unit cells along a, b, c (supercell); default 1 1 1
+         *   wholeMolecules : keep every molecule / discrete chemical species intact. Atoms are grouped into
+         *                    bonded fragments (covalent radii + bondTolerance, periodic), each fragment is
+         *                    "unwrapped" so that it is contiguous (it may stick out of the unit cell), and the
+         *                    fragment is placed in the cell that contains its centre. Fragments that are
+         *                    infinite (chains, layers, frameworks, ionic lattices such as NaCl) cannot be made
+         *                    whole and are handled as before (wrapped into the cell, see 'boundary'). default true
+         *   bondTolerance  : extra distance (Angstrom) added to the sum of covalent radii when detecting bonds; default 0.4
+         *   boundary       : for atoms that are NOT part of a whole molecule, also emit the periodic image of every
+         *                    atom lying on a cell face/edge/corner (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl);
+         *                    default true.
+         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, wholeMolecules: true};
          */
-        Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+        Text.coreCifOptions = {
+            nx: 1, ny: 1, nz: 1,
+            wholeMolecules: true,   // new; set false for the old wrapped behaviour
+            bondTolerance: 0.4,     // new; raise it if bonds are missed, lower it if unrelated atoms get joined, default 0.4
+            boundary: true
+        };
+        // covalent radii (Angstrom, Cordero et al. 2008) used for bond detection
+        var coreCovRadii = { H: 0.31, D: 0.31, He: 0.28, Li: 1.28, Be: 0.96, B: 0.84, C: 0.76, N: 0.71, O: 0.66, F: 0.57, Ne: 0.58,
+            Na: 1.66, Mg: 1.41, Al: 1.21, Si: 1.11, P: 1.07, S: 1.05, Cl: 1.02, Ar: 1.06, K: 2.03, Ca: 1.76, Sc: 1.70, Ti: 1.60, V: 1.53,
+            Cr: 1.39, Mn: 1.39, Fe: 1.32, Co: 1.26, Ni: 1.24, Cu: 1.32, Zn: 1.22, Ga: 1.22, Ge: 1.20, As: 1.19, Se: 1.20, Br: 1.20, Kr: 1.16,
+            Rb: 2.20, Sr: 1.95, Y: 1.90, Zr: 1.75, Nb: 1.64, Mo: 1.54, Tc: 1.47, Ru: 1.46, Rh: 1.42, Pd: 1.39, Ag: 1.45, Cd: 1.44, In: 1.42,
+            Sn: 1.39, Sb: 1.39, Te: 1.38, I: 1.39, Xe: 1.40, Cs: 2.44, Ba: 2.15, La: 2.07, Ce: 2.04, Pr: 2.03, Nd: 2.01, Sm: 1.98, Eu: 1.98,
+            Gd: 1.96, Tb: 1.94, Dy: 1.92, Ho: 1.92, Er: 1.89, Tm: 1.90, Yb: 1.87, Lu: 1.87, Hf: 1.75, Ta: 1.70, W: 1.62, Re: 1.51, Os: 1.44,
+            Ir: 1.41, Pt: 1.36, Au: 1.36, Hg: 1.32, Tl: 1.45, Pb: 1.46, Bi: 1.48 };
         // g: fractional coordinates wrapped into [0,1). Returns all translated copies of g.
         function coreLatticeImages(g, nx, ny, nz, bBoundary) {
             var eps = 1e-3, n = [nx, ny, nz], ranges = [], out = [], k, i, r, x, y, z;
@@ -2627,6 +2649,60 @@ var CIFTools;
                     for (z = 0; z < ranges[2].length; z++)
                         out.push([ranges[0][x], ranges[1][y], ranges[2][z]]);
             return out;
+        }
+        /**
+         * Group atoms (fractional coordinates wrapped into the cell) into bonded fragments, taking periodic
+         * images into account. Every atom of a fragment gets an integer lattice translation T so that
+         * (g + T) forms a contiguous molecule. A fragment that reaches its own periodic image
+         * (chain / layer / framework) is flagged as infinite.
+         *   atoms : [{el, g:[fx,fy,fz]}]   toCart : fractional -> Cartesian (linear part only)
+         *   h     : interplanar spacings of the cell along a, b, c   tol : bond tolerance (Angstrom)
+         */
+        function coreFindMolecules(atoms, toCart, h, tol) {
+            var N = atoms.length, nb = [], rad = [], i, j, k, e, m, q;
+            for (i = 0; i < N; i++) { nb.push([]); rad.push(coreCovRadii[atoms[i].el] || 1.5); }
+            for (i = 0; i < N; i++) {
+                for (j = i; j < N; j++) {
+                    var d = [atoms[j].g[0] - atoms[i].g[0], atoms[j].g[1] - atoms[i].g[1], atoms[j].g[2] - atoms[i].g[2]];
+                    var rc = rad[i] + rad[j] + tol, cand = [[], [], []], dt, t;
+                    for (k = 0; k < 3; k++) {
+                        var base = -Math.round(d[k]);
+                        for (dt = -1; dt <= 1; dt++) {
+                            t = base + dt;
+                            if (Math.abs(d[k] + t) * h[k] <= rc) cand[k].push(t);
+                        }
+                    }
+                    for (var a = 0; a < cand[0].length; a++) for (var b = 0; b < cand[1].length; b++) for (var c = 0; c < cand[2].length; c++) {
+                        var tv = [cand[0][a], cand[1][b], cand[2][c]];
+                        if (i === j) { // bond to own image: record each translation pair only once
+                            if (tv[0] === 0 && tv[1] === 0 && tv[2] === 0) continue;
+                            if (tv[0] < 0 || (tv[0] === 0 && (tv[1] < 0 || (tv[1] === 0 && tv[2] < 0)))) continue;
+                        }
+                        var cc = toCart([d[0] + tv[0], d[1] + tv[1], d[2] + tv[2]]);
+                        var d2 = cc[0] * cc[0] + cc[1] * cc[1] + cc[2] * cc[2];
+                        if (d2 < rc * rc && d2 > 0.25) { // > 0.5 A: closer atoms are disorder alternatives, not bonds
+                            nb[i].push({ j: j, t: tv });
+                            nb[j].push({ j: i, t: [-tv[0], -tv[1], -tv[2]] });
+                        }
+                    }
+                }
+            }
+            var T = new Array(N), comps = [], s, queue, members, infinite, cur, tj, o;
+            for (s = 0; s < N; s++) {
+                if (T[s]) continue;
+                T[s] = [0, 0, 0]; queue = [s]; members = [s]; infinite = false;
+                for (q = 0; q < queue.length; q++) {
+                    cur = queue[q];
+                    for (e = 0; e < nb[cur].length; e++) {
+                        o = nb[cur][e];
+                        tj = [T[cur][0] + o.t[0], T[cur][1] + o.t[1], T[cur][2] + o.t[2]];
+                        if (!T[o.j]) { T[o.j] = tj; queue.push(o.j); members.push(o.j); }
+                        else if (T[o.j][0] !== tj[0] || T[o.j][1] !== tj[1] || T[o.j][2] !== tj[2]) infinite = true;
+                    }
+                }
+                comps.push({ members: members, infinite: infinite });
+            }
+            return { T: T, comps: comps };
         }
         function convertCoreCif(data) {
             var tk = coreTokens(data), i = 0, n = tk.length, single = {}, loops = [], name = 'data_core', t, cols, rows, cur;
@@ -2681,12 +2757,21 @@ var CIFTools;
                 '_atom_site.label_comp_id', '_atom_site.label_asym_id', '_atom_site.label_entity_id', '_atom_site.label_seq_id',
                 '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.occupancy', '_atom_site.B_iso_or_equiv',
                 '_atom_site.auth_seq_id', '_atom_site.auth_asym_id', '_atom_site.pdbx_PDB_model_num');
-            var serial = 0, seen = [], r, s, f, g, k, dup, j, sym, el, lab, cart;
+            var serial = 0, r, s, f, g, k, dup, j, sym, el, lab, cart;
             var o = Text.coreCifOptions || {}, images, im;
             var opt = {
                 nx: Math.max(1, parseInt(o.nx) || 1), ny: Math.max(1, parseInt(o.ny) || 1), nz: Math.max(1, parseInt(o.nz) || 1),
-                boundary: (o.boundary === undefined) ? true : !!o.boundary
+                boundary: (o.boundary === undefined) ? true : !!o.boundary,
+                wholeMolecules: (o.wholeMolecules === undefined) ? true : !!o.wholeMolecules,
+                bondTolerance: (o.bondTolerance === undefined || isNaN(parseFloat(o.bondTolerance))) ? 0.4 : parseFloat(o.bondTolerance)
             };
+            function emit(at, frac) {
+                var cart = toCart(frac);
+                out.push(['HETATM', ++serial, at.el, at.lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
+                    at.occ, '0.00', 1, 'A', 1].join(' '));
+            }
+            // 1) all symmetry-generated atoms of one cell, wrapped into [0,1)
+            var list = [];
             for (r = 0; r < atoms.rows.length; r++) {
                 var row = atoms.rows[r];
                 if (get(row, '_atom_site_calc_flag') === 'dum') continue; // dummy atoms
@@ -2695,6 +2780,7 @@ var CIFTools;
                 sym = get(row, '_atom_site_type_symbol'); if (sym === '?') sym = lab;
                 el = (sym.match(/^[A-Za-z]{1,2}/) || ['X'])[0];
                 el = el.charAt(0).toUpperCase() + el.substr(1).toLowerCase();
+                var occ = coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy'));
                 var mySeen = [];
                 for (s = 0; s < symops.length; s++) {
                     g = symops[s](f).map(function (v) { return v - Math.floor(v + 1e-6); });
@@ -2704,13 +2790,49 @@ var CIFTools;
                     }
                     if (dup) continue;
                     mySeen.push(g);
-                    // fill the cell (and optional supercell) by lattice translation of the symmetry-generated site
-                    images = coreLatticeImages(g, opt.nx, opt.ny, opt.nz, opt.boundary);
-                    for (im = 0; im < images.length; im++) {
-                        cart = toCart(images[im]);
-                        out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
-                            coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    list.push({ el: el, lab: lab, occ: occ, g: g });
+                }
+            }
+            // 2) emit them, either as whole molecules or simply wrapped into the cell
+            var mol = null;
+            if (opt.wholeMolecules && list.length) {
+                var Vc = a * b * cc * vol, sinal = Math.sqrt(1 - cosa * cosa), sinbe = Math.sqrt(1 - cosb * cosb);
+                var hh = [Vc / (b * cc * sinal), Vc / (a * cc * sinbe), Vc / (a * b * sing)];
+                if (isFinite(hh[0] + hh[1] + hh[2]) && hh[0] > 0 && hh[1] > 0 && hh[2] > 0) mol = coreFindMolecules(list, toCart, hh, opt.bondTolerance);
+            }
+            var ci, m, at, ix, iy, iz, mean, shift;
+            if (mol) {
+                for (ci = 0; ci < mol.comps.length; ci++) {
+                    var comp = mol.comps[ci];
+                    if (comp.infinite) { // cannot be made whole: wrap into the cell as before
+                        for (m = 0; m < comp.members.length; m++) {
+                            at = list[comp.members[m]];
+                            images = coreLatticeImages(at.g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                            for (im = 0; im < images.length; im++) emit(at, images[im]);
+                        }
+                        continue;
                     }
+                    // contiguous molecule: place it in the cell that holds its centre, keep all atoms together
+                    mean = [0, 0, 0];
+                    for (m = 0; m < comp.members.length; m++) {
+                        at = list[comp.members[m]];
+                        for (k = 0; k < 3; k++) mean[k] += (at.g[k] + mol.T[comp.members[m]][k]) / comp.members.length;
+                    }
+                    shift = [-Math.floor(mean[0] + 1e-6), -Math.floor(mean[1] + 1e-6), -Math.floor(mean[2] + 1e-6)];
+                    for (ix = 0; ix < opt.nx; ix++) for (iy = 0; iy < opt.ny; iy++) for (iz = 0; iz < opt.nz; iz++) {
+                        for (m = 0; m < comp.members.length; m++) {
+                            at = list[comp.members[m]];
+                            var tt = mol.T[comp.members[m]];
+                            emit(at, [at.g[0] + tt[0] + shift[0] + ix, at.g[1] + tt[1] + shift[1] + iy, at.g[2] + tt[2] + shift[2] + iz]);
+                        }
+                    }
+                }
+            }
+            else {
+                for (m = 0; m < list.length; m++) {
+                    at = list[m];
+                    images = coreLatticeImages(at.g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                    for (im = 0; im < images.length; im++) emit(at, images[im]);
                 }
             }
             out.push('#');
@@ -3011,7 +3133,7 @@ var CIFTools;
                 // This approach to binary parsing wastes a bit of memory to trade for speed compared to:
                 //
                 //   let value = buffer.subarray(offset, offset + length); //new Uint8Array(buffer.buffer, offset, length);
-                // 
+                //
                 // It turns out that using the view created by subarray probably uses DataView
                 // in the background, which causes the element access to be several times slower
                 // than creating the new byte array.
@@ -4335,7 +4457,7 @@ var CIFTools;
                     if (index === void 0) {
                         // increment the length
                         accLength += s.length;
-                        // store the string and index                   
+                        // store the string and index
                         index = strings.length;
                         strings[index] = s;
                         map[s] = index;
@@ -56307,7 +56429,7 @@ void main() {
 	    }
 
 	    //Convert a three-letter residue name to a one-letter residue abbreviation, e.g., 'LYS' to 'K', or ' A' to 'A' for nucleotides.
-	    residueName2Abbr(residueName) { this.icn3dui;
+	    residueName2Abbr(residueName, bOneLetter) { this.icn3dui;
 	      let pos = residueName.indexOf(' ');
 	      if(pos > 0) {
 	          residueName = residueName.substr(0, pos);
@@ -56402,7 +56524,12 @@ void main() {
 	          return 'O';
 
 	        default:
-	          return residueName.trim();
+	          if(bOneLetter) {
+	            return 'X';
+	          }
+	          else {
+	            return residueName.trim();
+	          }
 	      }
 	    }
 
@@ -56478,15 +56605,20 @@ void main() {
 	    }
 
 	    getIdArray(resid) { this.icn3dui;
-	        //var idArray = resid.split('_');
 	        let idArray = [];
 
 	        if(resid) {
-	            let pos1 = resid.indexOf('_');
-	            let pos2 = resid.lastIndexOf('_');
-	            idArray.push(resid.substr(0, pos1));
-	            idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
-	            idArray.push(resid.substr(pos2 + 1));
+	          let itemArray = resid.split('_');
+
+	          if(resid.indexOf('pdb_') == 0 ) { // e.g., pdb_00001GPK_A_15
+	            idArray.push(itemArray[0] + '_' + itemArray[1]);
+	            for(let i = 2, il = itemArray.length; i < il; ++i) {
+	              idArray.push(itemArray[i]);
+	            }
+	          }
+	          else {
+	            idArray = itemArray;
+	          }
 	        }
 
 	        return idArray;
@@ -56497,12 +56629,12 @@ void main() {
 	      let bArray = b.split(',');
 	      let aIdArray, bIdArray;
 	      if(type == 'save1') {
-	        aIdArray = me.utilsCls.getIdArray(aArray[0]); //aArray[0].split('_');
-	        bIdArray = me.utilsCls.getIdArray(bArray[0]); //bArray[0].split('_');
+	        aIdArray = me.utilsCls.getIdArray(aArray[0]); 
+	        bIdArray = me.utilsCls.getIdArray(bArray[0]); 
 	      }
 	      else if(type == 'save2') {
-	        aIdArray = me.utilsCls.getIdArray(aArray[1]); //aArray[1].split('_');
-	        bIdArray = me.utilsCls.getIdArray(bArray[1]); //bArray[1].split('_');
+	        aIdArray = me.utilsCls.getIdArray(aArray[1]); 
+	        bIdArray = me.utilsCls.getIdArray(bArray[1]); 
 	      }
 	      let aChainid = aIdArray[0] + '_' + aIdArray[1];
 	      let bChainid = bIdArray[0] + '_' + bIdArray[1];
@@ -58417,6 +58549,9 @@ void main() {
 	        me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { me.icn3d; //e.preventDefault();
 	           me.htmlCls.dialogCls.openDlg('dl_mmcifid', 'Please input mmCIF ID');
 	        });
+	        me.myEventCls.onIds("#" + me.pre + "mn1_codid", "click", function(e) { me.icn3d; //e.preventDefault();
+	           me.htmlCls.dialogCls.openDlg('dl_codid', 'Please input COD ID');
+	        });
 
 	        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { me.icn3d; //e.preventDefault();
 	           me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
@@ -58956,7 +59091,7 @@ void main() {
 	                       thisClass.setLogCmd("link to compounds with structure similar to CID " + ic.inputid + ": " + url, false);
 	               }
 	               else {
-	                   let idArray = ic.inputid.split('_');
+	                   let idArray = me.utilsCls.getIdArray(ic.inputid);
 	                   
 	                   if(idArray.length === 1) {
 	                       url = me.htmlCls.baseUrl + "vastplus/vastplus.cgi?uid=" + ic.inputid;
@@ -60018,17 +60153,14 @@ void main() {
 
 	    }
 
-	    async setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
-	      ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
-
-	      if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
-	        ic.pk = 1;
-	        ic.opts['pk'] = 'atom';
+	    setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
+	      if(ic.cifData) {
+	         ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
+	         
+	         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+	         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+	         ic.drawCls.draw();
 	      }
-	      
-	      ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-	      ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-	      await ic.ParserUtilsCls.renderStructure();
 	    }
 
 	    clickMenu6() { let me = this.icn3dui, ic = me.icn3d;
@@ -60048,20 +60180,20 @@ void main() {
 	           ic.drawCls.draw();
 	        });
 
-	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", async function(e) { me.icn3d; //e.preventDefault();
-	           await thisClass.setSupercell(0);
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", function(e) { me.icn3d; //e.preventDefault();
+	           thisClass.setSupercell(0);
 	           thisClass.setLogCmd('set supercell 0', true);
 	        });
-	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", async function(e) { me.icn3d; //e.preventDefault();
-	           await thisClass.setSupercell(1);
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", function(e) { me.icn3d; //e.preventDefault();
+	           thisClass.setSupercell(1);
 	           thisClass.setLogCmd('set supercell 1', true);
 	        });
-	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", async function(e) { me.icn3d; //e.preventDefault();
-	           await thisClass.setSupercell(2);
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", function(e) { me.icn3d; //e.preventDefault();
+	           thisClass.setSupercell(2);
 	           thisClass.setLogCmd('set supercell 2', true);
 	        });
-	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", async function(e) { me.icn3d; //e.preventDefault();
-	           await thisClass.setSupercell(3);
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", function(e) { me.icn3d; //e.preventDefault();
+	           thisClass.setSupercell(3);
 	           thisClass.setLogCmd('set supercell 3', true);
 	        });
 
@@ -61419,6 +61551,7 @@ void main() {
 	        html += this.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
 	        html += this.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
 	        //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
+	//        html += this.getLink('mn1_codid', 'COD ID ' + me.htmlCls.wifiStr, 1, 2);
 
 	        html += this.getLink('mn1_cid', 'PubChem CID/Name/InChI ' + me.htmlCls.wifiStr, 1, 2);
 	        html += this.getLink('mn1_smiles', 'Chemical SMILES ', undefined, 2);
@@ -62659,16 +62792,17 @@ void main() {
 
 	            html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
 
-	            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+	            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined  || me.cfg.mmtfid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
 	            //if(bInputid) {
 	              html += this.getMenuText('assemblyWrapper', 'Assembly', undefined, 1, 1);
 	              html += "<ul>";
 
-	              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined) { // e.g., cif file input
-	                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Original Assembly', undefined, 1, 2);
+	              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmtfid !== undefined) { // e.g., cif file input
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Biological Assembly', undefined, 1, 2);
+	                html += this.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', undefined, 1, 2);
 	                html += this.getRadio('mn6_assembly', 'mn6_assembly1', '1 x 1 x 1', true, 1, 2);
-	                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, 1, 2);
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, undefined, 2);
 	                html += this.getRadio('mn6_assembly', 'mn6_assembly3', '3 x 3 x 3', undefined, 1, 2);
 	              }
 	              else if(!me.cfg.bu) {
@@ -63922,6 +64056,12 @@ void main() {
 	        html += this.addNotebookTitle('dl_mmcifid', 'Please input an mmCIF ID');
 	        html += "mmCIF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmcifid' value='1TUP' size=8> ";
 	        html += me.htmlCls.buttonStr + "reload_mmcif'>Load</button>";
+	        html += "</div>";
+
+	        html += me.htmlCls.divStr + "dl_codid' class='" + dialogClass + "'>";
+	        html += this.addNotebookTitle('dl_codid', 'Please input a COD ID');
+	        html += "COD ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "codid' value='1000041' size=8> ";
+	        html += me.htmlCls.buttonStr + "reload_cod'>Load</button>";
 	        html += "</div>";
 
 	        html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
@@ -65586,7 +65726,7 @@ void main() {
 	        let idArray = ids.split(',');
 
 	        if(!bAppend) {
-	            if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+	            if(idArray.length == 1 && (idArray[0].length == 4 || idArray[0].indexOf('pdb_') == 0 || !isNaN(idArray[0])) ) {
 	                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
 	                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
 	                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
@@ -65598,8 +65738,8 @@ void main() {
 	            }
 	        }
 	        else {
-	            // single MMDB ID could show memebranes
-	            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+	            // single MMDB ID could show membranes
+	            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || idArray[0].indexOf('pdb_') == 0 || !isNaN(idArray[0])) ) {
 	                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
 	                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
 	                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
@@ -66087,7 +66227,7 @@ void main() {
 	               if(!me.cfg.notebook) dialog.dialog( "close" );
 	               thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
 	               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-	               window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+	               window.open(hostUrl + '?bcifid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
 	           }
 	        });
 
@@ -66431,7 +66571,7 @@ void main() {
 	                await ic.scapCls.retrieveScap(snp, bInteraction);
 	                thisClass.setLogCmd('scap interaction ' + snp, true);
 
-	                let idArray = snp.split('_'); //stru_chain_resi_snp
+	                let idArray = me.utilsCls.getIdArray(snp); //stru_chain_resi_snp
 	                let select = '.' + idArray[1] + ':' + idArray[2];
 	                let name = 'snp_' + idArray[1] + '_' + idArray[2];
 	                thisClass.setLogCmd("select " + select + " | name " + name, true);
@@ -66470,7 +66610,6 @@ void main() {
 	           let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
 	           window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
 	        });
-
 	        me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { let ic = me.icn3d;
 	           if (e.keyCode === 13) {
 	               e.preventDefault();
@@ -66478,6 +66617,23 @@ void main() {
 	               thisClass.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
 	               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
 	               window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+	           }
+	        });
+
+	        me.myEventCls.onIds("#" + me.pre + "reload_cod", "click", function(e) { let ic = me.icn3d;
+	           e.preventDefault();
+	           if(!me.cfg.notebook) dialog.dialog( "close" );
+	           thisClass.setLogCmd("load cod " + $("#" + me.pre + "codid").val(), false);
+	           let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+	           window.open(hostUrl + '?codid=' + $("#" + me.pre + "codid").val(), urlTarget);
+	        });
+	        me.myEventCls.onIds("#" + me.pre + "codid", "keyup", function(e) { let ic = me.icn3d;
+	           if (e.keyCode === 13) {
+	               e.preventDefault();
+	               if(!me.cfg.notebook) dialog.dialog( "close" );
+	               thisClass.setLogCmd("load cod " + $("#" + me.pre + "codid").val(), false);
+	               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+	               window.open(hostUrl + '?codid=' + $("#" + me.pre + "codid").val(), urlTarget);
 	           }
 	        });
 
@@ -69066,7 +69222,7 @@ void main() {
 	            await ic.scapCls.retrieveScap(snp, bInteraction);
 	            thisClass.setLogCmd('scap interaction ' + snp, true);
 
-	            let idArray = snp.split('_'); //stru_chain_resi_snp
+	            let idArray = me.utilsCls.getIdArray(snp); //stru_chain_resi_snp
 	            let select = '.' + idArray[1] + ':' + idArray[2];
 	            let name = 'snp_' + idArray[1] + '_' + idArray[2];
 	            thisClass.setLogCmd("select " + select + " | name " + name, true);
@@ -79090,6 +79246,43 @@ void main() {
 	    //    }
 	    }
 
+	    // Keep the slab plane at the same position relative to the molecule when zooming.
+	    // In perspective mode zooming moves the camera along the view direction, so the near plane
+	    // (distance from the camera) has to move with it. In orthographic mode zooming only changes
+	    // the frustum size and the camera does not move, so the slab plane already stays fixed.
+	    updateSlabByZoom() { let ic = this.icn3d, me = ic.icn3dui;
+	        if(ic.opts['slab'] !== 'yes' || me.bNode) return;
+	        if(ic.opts.camera.toLowerCase() !== 'perspective') return;
+
+	        let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+	        if(bInstance) return; // near plane is fixed at 0.1 for instancing
+
+	        let cam = (ic.bControlGl) ? window.cam : ic.cam;
+	        let controls = (ic.bControlGl) ? window.controls : ic.controls;
+	 
+	        // at zoom = 1 the slab plane is ic.maxD * camMaxDFactor from the camera, i.e. the plane through
+	        // the center (or 10 angstroms in front of it when fog is on to keep some surrounding residues)
+	        let offset = (ic.camMaxDFactorFog !== undefined) ? 10 : 0;
+
+	        // current distance from the camera to the center of rotation, which changes with zooming
+	        let dist = cam.position.distanceTo(controls.target);
+
+	        // keep the plane at the same position relative to the molecule
+	        let nearClip = Math.max(0.1, dist - offset);
+
+	        if(Math.abs(cam.near - nearClip) > 1e-6) {
+	            cam.near = nearClip;
+	            cam.updateProjectionMatrix();
+	            if(ic.cam && ic.cam !== cam) {
+	                ic.cam.near = nearClip;
+	                ic.cam.updateProjectionMatrix();
+	            }
+	        }
+
+	        // the impostor shaders (spheres, cylinders) clip with the nearClip uniform
+	        if(ic.uniforms && ic.uniforms.nearClip) ic.uniforms.nearClip.value = nearClip;
+	    }
+
 	    setSlab() { let ic = this.icn3d, me = ic.icn3dui;
 	        if(ic.bControlGl && !me.bNode) {
 	            let maxD = ic.maxD;
@@ -79205,7 +79398,8 @@ void main() {
 	                else {
 	                    // adjust
 	                    let zoomFactor = (ic._zoomFactor > 1) ? ic._zoomFactor * 1.0 : ic._zoomFactor;
-	                    ic.scene.fog = new Fog$1(background, 2.5 * ic.maxD * zoomFactor, 4 * ic.maxD * zoomFactor);
+	                    let fogStrength = 2; // 1 = current, >1 = stronger
+	                    ic.scene.fog = new Fog$1(background, (3 - 0.5 / fogStrength) * ic.maxD * zoomFactor, (3 + 1.0 / fogStrength) * ic.maxD * zoomFactor);
 	                    ic.bSetFog = true;
 	                    ic.camMaxDFactorFog = 3;
 	                }
@@ -81430,6 +81624,8 @@ void main() {
 
 	        let prevAxis1 = new Vector3$1(), prevAxis2;
 	        for (let i = 0, lim = pnts.length; i < lim; ++i) {
+	            if(!pnts[i]) continue;
+	            
 	            let r, idx = (i - 1) * axisDivInv;
 
 	            if (i === 0) {
@@ -81462,7 +81658,7 @@ void main() {
 	            }
 
 	            let delta, axis1, axis2;
-	            if (i < lim - 1) {
+	            if (i < lim - 1 && pnts[i + 1]) {
 	                delta = pnts[i].clone().sub(pnts[i + 1]);
 	                axis1 = new Vector3$1(0, -delta.z, delta.y).normalize().multiplyScalar(r);
 	                axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);
@@ -85448,7 +85644,6 @@ void main() {
 	            let chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
 	            html += '<tr>' + structureStr + chainStr + '<th>Residue</th><th>Number</th><th>SASA (&#8491;<sup>2</sup>)</th><th>Percent Out</th><th>In/Out</th></tr>';
 	            for(let resid in ic.resid2area) {
-	                //var idArray = resid.split('_');
 	                let pos = resid.lastIndexOf('_');
 	                let resn = resid.substr(pos + 1);
 
@@ -86102,6 +86297,8 @@ void main() {
 	                    // only apply to displayed atoms
 	                    // if(!ic.dAtoms.hasOwnProperty(line.serial1) || !ic.dAtoms.hasOwnProperty(line.serial2)) continue;
 
+	                    if(!ic.atoms[line.serial1] || !ic.atoms[line.serial2]) continue;
+
 	                    line.position1 = ic.atoms[line.serial1].coord;
 	                    line.position2 = ic.atoms[line.serial2].coord;
 
@@ -86232,6 +86429,7 @@ void main() {
 	                        if(type == 'chemical') continue; // just connect checmicals together
 
 	                        if(ic.clbondpnts[atom0.structure] === undefined) ic.clbondpnts[atom0.structure] = [];
+	                        if(ic.clbondpnts[atom1.structure] === undefined) ic.clbondpnts[atom1.structure] = [];
 	                        ic.clbondpnts[atom0.structure].push(resid0);
 	                        ic.clbondpnts[atom1.structure].push(resid1);
 
@@ -86777,9 +86975,9 @@ void main() {
 	                }
 	            }
 
-	            ic.lineCls.createLines(ic.lines);
-	            if(!ic.planes) ic.planes = [];
-	            ic.cylinderCls.createPlanes(ic.planes);
+	            // ic.lineCls.createLines(ic.lines);
+	            // if(!ic.planes) ic.planes = [];
+	            // ic.cylinderCls.createPlanes(ic.planes);
 	    //    }
 
 	        // distance sets
@@ -86902,6 +87100,10 @@ void main() {
 	                ic.pk = 3;
 	                break;
 	        }
+
+	        ic.lineCls.createLines(ic.lines);
+	        if(!ic.planes) ic.planes = [];
+	        ic.cylinderCls.createPlanes(ic.planes);
 	    }
 
 	    applyChemicalbindingOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
@@ -88048,6 +88250,8 @@ void main() {
 
 	        let shiness = ic.shininess / 100.0 * 0.5;
 
+	        let fogRGB = background.clone().convertLinearToSRGB();
+
 	        ic.uniforms = UniformsUtils.merge([
 	          UniformsLib.common,
 	          {
@@ -88068,7 +88272,8 @@ void main() {
 	            nearClip: { type: "f", value: nearClip },
 	            ortho: { type: "f", value: 0.0 },
 	            shrink: { type: "f", value: 0.13 },
-	            fogColor: { type: "v3", value: [background.r, background.g, background.b] },
+	            //fogColor: { type: "v3", value: [background.r, background.g, background.b] },
+	            fogColor: { type: "v3", value: [fogRGB.r, fogRGB.g, fogRGB.b] },
 	            fogNear: { type: "f", value: near },
 	            fogFar: { type: "f", value: far },
 	            fogDensity: { type: "f", value: 2.0 }
@@ -106301,6 +106506,9 @@ bool bvhIntersectFogVolumeHit(
 
 	        cam = this.setDirectLight(cam);
 
+	        // move the slab plane according to the zoom
+		    if(ic.opts['slab'] === 'yes') ic.cameraCls.updateSlabByZoom();
+
 	        if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
 	        if(ic.bVr) {
@@ -109864,7 +110072,7 @@ bool bvhIntersectFogVolumeHit(
 	        ic.bAjaxCddSite = true;
 	    }
 
-	    getResiArrayStr(resiNCBIArray, chainid) { let ic = this.icn3d; ic.icn3dui;
+	    getResiArrayStr(resiNCBIArray, chainid) { let ic = this.icn3d, me = ic.icn3dui;
 	        let resiArrayStr = '';
 	        for(let i = 0, il = resiNCBIArray.length; i < il; ++i) {
 	            let resiNCBI = resiNCBIArray[i] + 1; // zero-based
@@ -109872,7 +110080,8 @@ bool bvhIntersectFogVolumeHit(
 	            let resid = ic.ncbi2resid[residNCBI];
 	            if(!resid) resid = residNCBI; // this happens sometimes, e.g., Q9Y4K1
 
-	            let resi = resid.split('_')[2];
+	            let idArray = me.utilsCls.getIdArray(resid);
+	            let resi = idArray[2];
 	            if(i > 0) resiArrayStr += ',';
 	            resiArrayStr += resi;
 	        }
@@ -110968,7 +111177,8 @@ bool bvhIntersectFogVolumeHit(
 	                let residArray = Object.keys(residHash);
 
 	                // delete the following loops
-	                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[residArray.length - 1].split('_')[2]);
+	                let idArray = me.utilsCls.getIdArray(residArray[residArray.length - 1]);
+	                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, idArray[2]);
 
 	                for(let j = lastPos + 1, jl = ic.chainsSeq[chnid].length; j < jl; ++j) {
 	                    let resi = ic.chainsSeq[chnid][j].resi;
@@ -110984,7 +111194,8 @@ bool bvhIntersectFogVolumeHit(
 	                }
 
 	                // delete the previous loops
-	                ic.setSeqAlignCls.getPosFromResi(chnid, residArray[0].split('_')[2]);
+	                idArray = me.utilsCls.getIdArray(residArray[0]);
+	                ic.setSeqAlignCls.getPosFromResi(chnid, idArray[2]);
 
 	                for(let j = lastPos - 1; j >= 0; --j) {
 	                    let resi = ic.chainsSeq[chnid][j].resi;
@@ -111987,8 +112198,9 @@ bool bvhIntersectFogVolumeHit(
 	        let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chnid]);
 	        // for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
 	        for(let resid in residHash) {
-	            let i = resid.split('_')[2];
-	            
+	            let idArray = me.utilsCls.getIdArray(resid);
+	            let i = idArray[2];
+
 	            if(resi2index[i] !== undefined) {            
 	                ++snpCnt;
 	                let allDiseaseTitle = '';
@@ -114181,7 +114393,6 @@ bool bvhIntersectFogVolumeHit(
 				// if(fromPos >= start && toPos <= end) {
 					if(ssCnt > 0) jsonStr += ', ';
 					jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
-					// jsonStr += '[' + sstype + ',' + residFrom.split('_')[2] + ',' + residTo.split('_')[2] + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
 					jsonStr += substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
 					++ssCnt;
 				// }
@@ -114198,7 +114409,6 @@ bool bvhIntersectFogVolumeHit(
 			for(let j = startAll; j <= endAll; ++j) {
 				let ncbiResid = chnid + '_' + j;
 				let resid = ic.ncbi2resid[ncbiResid];
-				resid.split('_')[2];
 
 				let pos = j;
 
@@ -114206,7 +114416,6 @@ bool bvhIntersectFogVolumeHit(
 
 				if(!residueHash.hasOwnProperty(resid)) {
 					jsonStr += '[' + pos + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
-					// jsonStr += '[' + resi + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
 				}
 				else {
 					let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
@@ -114215,7 +114424,6 @@ bool bvhIntersectFogVolumeHit(
 					let restype = (me.parasCls.resn2restype[atom.resn]) ? me.parasCls.resn2restype[atom.resn] : 0;
 					
 					jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
-					// jsonStr += '[' + resi + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
 				}
 
 				++domainCnt;		
@@ -120053,7 +120261,6 @@ bool bvhIntersectFogVolumeHit(
 	          for(let i = 0, il = graphJson.nodes.length; i < il; ++i) {
 	              let node = graphJson.nodes[i];
 	              //node.r: 1_1_1KQ2_A_1
-	              //var idArray = node.r.split('_');
 	              let idArray = [];
 	              idArray.push('');
 	              idArray.push('');
@@ -120232,8 +120439,8 @@ bool bvhIntersectFogVolumeHit(
 	    compNode(a, b, bReverseChain) { let ic = this.icn3d, me = ic.icn3dui;
 	      let resid1 = a.r.substr(4); // 1_1_1KQ2_A_1
 	      let resid2 = b.r.substr(4); // 1_1_1KQ2_A_1
-	      let aIdArray = me.utilsCls.getIdArray(resid1); //resid1.split('_');
-	      let bIdArray = me.utilsCls.getIdArray(resid2); //resid2.split('_');
+	      let aIdArray = me.utilsCls.getIdArray(resid1);
+	      let bIdArray = me.utilsCls.getIdArray(resid2);
 	      let aChainid = aIdArray[0] + '_' + aIdArray[1];
 	      let bChainid = bIdArray[0] + '_' + bIdArray[1];
 	      let aResi = parseInt(aIdArray[2]);
@@ -121286,7 +121493,7 @@ bool bvhIntersectFogVolumeHit(
 	            residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
 
 	            // stru_chain_resi_resn
-	            let ids = residname1.split('_');
+	            let ids = me.utilsCls.getIdArray(residname1);
 	            if(i > 0 && residname1 != prevResidname1) {
 	                bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
@@ -122687,8 +122894,8 @@ bool bvhIntersectFogVolumeHit(
 	                    //var scale = data2.transform.scale / factor;
 	                    let tMaster = data2.transform.translate.master;
 	                    let tMVector = new Vector3$1(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
-	                    let tSlave = data2.transform.translate.slave;
-	                    let tSVector = new Vector3$1(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
+	                    let tQuery = data2.transform.translate.slave; // actually means query protein
+	                    let tSVector = new Vector3$1(tQuery[0] / factor, tQuery[1] / factor, tQuery[2] / factor);
 	                    let rotation = data2.transform.rotate;
 	                    let rMatrix = [];
 	                    for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements
@@ -122932,44 +123139,6 @@ bool bvhIntersectFogVolumeHit(
 	            // calculate secondary structures with applyCommandDssp
 	            //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
 	                await ic.pdbParserCls.applyCommandDssp(true);
-	//!!!
-	/*
-	                // original version =============
-	                // align PDB chains
-	                for(let index in ic.pdbChainIndexHash) {
-	                    //ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
-	                    let idArray = ic.pdbChainIndexHash[index].split('_');
-	                    mmdbid_q = idArray[0];
-	                    let chain_q = idArray[1];
-	                    mmdbid_t = idArray[2];
-	                    let chain_t = idArray[3];
-
-	                    thisClass.transformStructure(mmdbid_q, index-1, 'query');                
-	                }
-
-	                // dynamically align pairs in ic.afChainIndexHash
-	                let ajaxArray = [], indexArray = [], struArray = [];
-	                let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
-	                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-
-	                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
-
-	                for(let index in ic.afChainIndexHash) {
-	                    let idArray = ic.afChainIndexHash[index].split('_');
-	                    mmdbid_q = idArray[0];
-	                    let chain_q = idArray[1];
-	                    let chainid_q = mmdbid_q + '_' + chain_q;
-
-	                    mmdbid_t = idArray[2];
-	                    let chain_t = idArray[3];
-	                    let chainid_t = mmdbid_t + '_' + chain_t;
-
-	                    // let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t, true).hAtoms : ic.chains[chainid_t];
-	                    // let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q, true).hAtoms : ic.chains[chainid_q];
-	                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainid_t, true).hAtoms : ic.chains[chainid_t];
-	                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainid_q, true).hAtoms : ic.chains[chainid_q];
-	                // end of original version =============
-	*/                
 
 	                // new version to be done for VASTsrv ==============
 	                // dynamically align pairs in all chainids
@@ -123438,10 +123607,10 @@ bool bvhIntersectFogVolumeHit(
 	        return chainidArray;
 	    }
 
-	    addPostfixForStructureids(structArray) { let ic = this.icn3d; ic.icn3dui;
+	    addPostfixForStructureids(structArray) { let ic = this.icn3d, me = ic.icn3dui;
 	        let struct2cnt = {};
 	        for(let i = 0, il = structArray.length; i < il; ++i) {
-	            if(structArray[i].toLowerCase().toLowerCase().substr(0,8) == 'pdb_0000') structArray[i] = structArray[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+	            if((me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined) && structArray[i].toLowerCase().toLowerCase().substr(0,8) == 'pdb_0000') structArray[i] = structArray[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
 
 	            let struct = structArray[i].toUpperCase(); 
 
@@ -123465,6 +123634,8 @@ bool bvhIntersectFogVolumeHit(
 
 	        ic.opts['proteins'] = 'c alpha trace';
 
+	        if(!chainalign) return;
+	        
 	        let alignArray = chainalign.split(',');
 	        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
 	        if(domainArray.length < alignArray.length) domainArray = [];
@@ -123537,7 +123708,7 @@ bool bvhIntersectFogVolumeHit(
 	                let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
 	                // TM-align (me.cfg.aligntool == 'tmalign') needs to input PDB
-	                if(me.cfg.aligntool != 'tmalign' && ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+	                if(me.cfg.aligntool != 'tmalign' && (ic.mmdbid_t.length == 4 || ic.mmdbid_t.indexOf('pdb_') == 0) && (ic.mmdbid_q.length == 4 || ic.mmdbid_q.indexOf('pdb_') == 0)) {
 	                    let urlalign;
 	                    
 	                    if(domainArray.length > 0) {
@@ -123826,7 +123997,7 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	        else {
 	            for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-	                if(structArrayTmp[i].toLowerCase().substr(0,8) == 'pdb_0000') structArrayTmp[i] = structArrayTmp[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+	                if((me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined) && structArrayTmp[i].toLowerCase().substr(0,8) == 'pdb_0000') structArrayTmp[i] = structArrayTmp[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
 
 	                let id = structArrayTmp[i].toUpperCase();
 	                if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
@@ -125357,6 +125528,19 @@ bool bvhIntersectFogVolumeHit(
 	        await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
 	    }
 
+	    async downloadCod(codid) { let ic = this.icn3d, me = ic.icn3dui;
+	        //ic.bCid = undefined;
+
+	        ic.ParserUtilsCls.setYourNote(codid.toUpperCase() + '(COD) in iCn3D');
+
+	        let url = "https://www.crystallography.net/cod/" + codid + ".cif";
+	        // let url = "https://www.crystallography.net/cif/1/00/00/1000041.cif";
+	        let data = await me.getAjaxPromise(url, 'text', true);
+
+	        let bText = true;
+	        ic.loadCIFCls.loadCIF(data, codid, bText);
+	    }
+
 	    async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
 	      try {
 	        // let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
@@ -125470,6 +125654,11 @@ bool bvhIntersectFogVolumeHit(
 	            ic.opts['color'] = 'structure';
 	        }
 
+	        if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
+	            ic.pk = 1;
+	            ic.opts['pk'] = 'atom';
+	        }
+
 	        ic.opmParserCls.modifyUIMapAssembly();
 
 	        await ic.pdbParserCls.addSecondary(bAppend);
@@ -125563,9 +125752,10 @@ bool bvhIntersectFogVolumeHit(
 	        me.cfg.query_id = idArray[0];
 	        me.cfg.blast_rep_id = idArray[1];
 
-	        let mmdbid = me.cfg.blast_rep_id.split('_')[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
+	        let textArray = me.utilsCls.getIdArray(me.cfg.blast_rep_id);
+	        let mmdbid = textArray[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
 
-	        if(mmdbid.length == 4) { // pdb
+	        if(mmdbid.length == 4 || mmdbid.indexOf('pdb_') == 0) { // pdb
 	            await this.downloadMmdb(mmdbid);
 	        }
 	        else {
@@ -125717,7 +125907,7 @@ bool bvhIntersectFogVolumeHit(
 	                if(ic.chainid2sid[chainid] == me.cfg.ligand.substr(3)) {
 	                    // save a set named me.cfg.ligand
 	                    let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
-	                    let idArray = Object.keys(residueHash)[0].split('_');
+	                    let idArray = me.utilsCls.getIdArray(Object.keys(residueHash)[0]);
 	                    let select = '.' + idArray[1] + ':' + idArray[2];
 
 	                    await ic.selByCommCls.selectByCommand(select, me.cfg.ligand, me.cfg.ligand);
@@ -126094,7 +126284,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        if (parsed.isError) {
 	            // report error:
-	            alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+	            alert("1 The Binary CIF data can NOT be parsed: " + parsed.toString());
 	            return;
 	        }
 
@@ -127059,7 +127249,8 @@ bool bvhIntersectFogVolumeHit(
 	            if(!pdbid) pdbid = ic.defaultPdbId;
 
 	            //if(me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined) { // skip opm for bcif files
-	                let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+	                let shortPdbid = pdbid.indexOf('pdb_0000') == 0 ? pdbid.substr(8) : pdbid;
+	                let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + shortPdbid.toLowerCase();
 
 	                let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
 	        
@@ -128135,7 +128326,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            for(let j in residuesOri) {
-	                let idArray = j.split('_');
+	                let idArray = me.utilsCls.getIdArray(j);
 	                let structure2 = idArray[0] + molNum;
 	                let residid2 = structure2 + '_' + idArray[1] + '_' + idArray[2];
 	                ic.residues[residid2] = {};
@@ -128146,7 +128337,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            for(let j in chainsOri) {
-	                let idArray = j.split('_');
+	                let idArray = me.utilsCls.getIdArray(j);
 	                let structure2 = idArray[0] + molNum;
 	                let chainid2 = structure2 + '_' + idArray[1];
 	                
@@ -128177,7 +128368,7 @@ bool bvhIntersectFogVolumeHit(
 
 	            // set ic.ncbi2resid and ic.resid2ncbi
 	            for(let chainid in chainsOri) {
-	                let idArray = chainid.split('_');
+	                let idArray = me.utilsCls.getIdArray(chainid);
 	                let structure2 = idArray[0] + molNum;
 	                let chainid2 = structure2 + '_' + idArray[1];
 
@@ -128741,7 +128932,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            for(let j in residuesOri) {
-	                let idArray = j.split('_');
+	                let idArray = me.utilsCls.getIdArray(j);
 	                let structure2 = idArray[0] + molNum;
 	                let residid2 = structure2 + '_' + idArray[1] + '_' + idArray[2];
 	                ic.residues[residid2] = {};
@@ -128752,7 +128943,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            for(let j in chainsOri) {
-	                let idArray = j.split('_');
+	                let idArray = me.utilsCls.getIdArray(j);
 	                let structure2 = idArray[0] + molNum;
 	                let chainid2 = structure2 + '_' + idArray[1];
 	                
@@ -128783,7 +128974,7 @@ bool bvhIntersectFogVolumeHit(
 
 	            // set ic.ncbi2resid and ic.resid2ncbi
 	            for(let chainid in chainsOri) {
-	                let idArray = chainid.split('_');
+	                let idArray = me.utilsCls.getIdArray(chainid);
 	                let structure2 = idArray[0] + molNum;
 	                let chainid2 = structure2 + '_' + idArray[1];
 
@@ -129009,9 +129200,8 @@ bool bvhIntersectFogVolumeHit(
 
 	            // realign based on residue by residue
 	            let alignment_final = ic.inputChainidArray.join(',');
-
 	            if(predefinedres && (alignment_final.split(',').length - 1) != predefinedres.split(': ').length) {
-	                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+	                alert("Please make sure the number of chains " + (alignment_final.split(',').length - 1) + " and the lines of predefined residues " + predefinedres.split(': ').length + " are the same...");
 	                return;
 	            }
 
@@ -129069,7 +129259,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            if(type == 'clustalw') {
-	                if(line.substr(0, 1) != ' ' && line.substr(0, 1) != '\t') {
+	                if(line.substr(0, 1) != '.' && line.substr(0, 1) != '*') {
 	                    let chainid_seq = line.split(/\s+/);
 	                    let idArray = chainid_seq[0].split('|');
 	                    let result = this.getChainid(idArray, bStart && !bSecBlock);
@@ -129094,9 +129284,11 @@ bool bvhIntersectFogVolumeHit(
 	                    seq = '';
 
 	                    let pos = line.indexOf(' ');
+	                    if(pos == -1) pos = line.length;
 	                    let idArray = line.substr(1, pos).split('|');
-	                    
+	                   
 	                    if(idArray.length == 1) {
+	                        bFound = true;
 	                        chainid = idArray[0];
 	                    }
 	                    else {
@@ -129160,8 +129352,9 @@ bool bvhIntersectFogVolumeHit(
 	                ic.inputChainidArray.push(chainid + '_A');
 	            }
 	        }
-	        else if(chainid.indexOf('_') != -1) { // PDB ID
-	            let stru = chainid.substr(0, chainid.indexOf('_')).substr(0, 4);
+	        else if(chainid.indexOf('_') != -1 || chainid.indexOf('pdb_') != -1) { // PDB ID
+	            let idArray = me.utilsCls.getIdArray(chainid);
+	            let stru = idArray[0];
 	            ic.struArray.push(stru);
 	            ic.inputChainidArray.push(chainid);
 	        }
@@ -129243,7 +129436,7 @@ bool bvhIntersectFogVolumeHit(
 	                }
 
 	                // ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
-	                 ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn).substr(0, 1)});
+	                 ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn, true)});
 
 	                struct2chain[atom.structure] = atom.structure + '_' + atom.chain;
 
@@ -129286,7 +129479,8 @@ bool bvhIntersectFogVolumeHit(
 
 	    async parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { let ic = this.icn3d, me = ic.icn3dui;
 
-	      let toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
+	      let itemArray1 = me.utilsCls.getIdArray(chainidArray[0]);
+	      let toStruct = itemArray1[0];
 
 	      let hAtoms = {}, rmsd;
 
@@ -129299,13 +129493,14 @@ bool bvhIntersectFogVolumeHit(
 	      ic.qt_start_end = [];
 
 	      let chainidHash = {};
-	      for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
-	          let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
+	      for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {    
+	          let itemArray2 = me.utilsCls.getIdArray(chainidArray[index + 1]);     
+	          let fromStruct = itemArray2[0];
 
 	          //if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
-	          let chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
-	          let chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+	          let chainTo = toStruct + '_' + itemArray1[1];
+	          let chainFrom = fromStruct + '_' + itemArray2[1];
 	          chainidHash[chainTo] = 1;
 	          chainidHash[chainFrom] = 1;
 
@@ -129340,7 +129535,7 @@ bool bvhIntersectFogVolumeHit(
 
 	          hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 	          rmsd = parseFloat(result.rmsd);
-	      }
+	      } 
 
 	      // If rmsd from vastsrv is too large, realign the chains
 	      //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
@@ -129561,15 +129756,6 @@ bool bvhIntersectFogVolumeHit(
 	            if(chainidArrayTmp[i] != prevChainid) chainidArray.push(chainidArrayTmp[i]);
 	            prevChainid = chainidArrayTmp[i];
 	        }
-	        
-	        // use the model from Membranome as template
-	        // if(ic.bAfMem && chainidArray.length == 2) {
-	        //     if(chainidArray[1].split('_')[0] == pdbidTemplate) {
-	        //         let tmp = chainidArray[0];
-	        //         chainidArray[0] = chainidArray[1]; 
-	        //         chainidArray[1] = tmp;
-	        //     }
-	        // }
 	        
 	        let bRealign = true;
 	        ic.qt_start_end = []; // reset the alignment
@@ -129815,12 +130001,12 @@ bool bvhIntersectFogVolumeHit(
 	        let predefinedResArray, predefinedResPair;
 
 	        if(bPredefined) {
-	            me.cfg.resdef.replace(/; /gi, ': ');
-	            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
-	            // predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split('; ');
-	            
+	            let tmpStr = me.cfg.resdef.replace(/; /gi, ': ');
+	            // predefinedResArray = decodeURIComponent(tmpStr).trim().replace(/\+/gi, ' ').split(': ');
+	            predefinedResArray = tmpStr.replace(/\+/gi, ' ').split(': ');
+
 	            if(predefinedResArray.length != chainidArray.length - 1) {
-	               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+	               alert("Please make sure the number of chains " + (chainidArray.length - 1) + " and the lines of predefined residues " + predefinedResArray.length + " are the same...");
 	               return;
 	            }
 	        }
@@ -129829,8 +130015,8 @@ bool bvhIntersectFogVolumeHit(
 	        for(let i = 0, il = chainidArray.length; i < il; ++i) {
 	            //if(bPredefined) predefinedRes = predefinedResArray[i].trim();
 
-	            let pos = chainidArray[i].indexOf('_');
-	            let mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
+	            let itemArray = me.utilsCls.getIdArray(chainidArray[i]);
+	            let mmdbid = itemArray[0]; //.toUpperCase();
 
 	            // if(!bRealign) mmdbid =  mmdbid.toUpperCase();
 
@@ -129838,7 +130024,7 @@ bool bvhIntersectFogVolumeHit(
 	                mmdbid_t = mmdbid;
 	            }
 
-	            let chainid = mmdbid + chainidArray[i].substr(pos);
+	            let chainid = mmdbid + '_' + itemArray[1]; 
 	            if(i == 0) chainid_t = chainid;
 	            
 	            if(!ic.chainsSeq || !ic.chainsSeq[chainid]) {
@@ -129867,7 +130053,7 @@ bool bvhIntersectFogVolumeHit(
 	                    if(!struct2CoorHash[chainidpair]) struct2CoorHash[chainidpair] = {};
 	                    if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
 
-	                    // master
+	                    // template
 	                    resiArray = predefinedResPair[0].split(",");        
 
 	                    result = thisClass.getSeqCoorResid(resiArray, chainid_t);
@@ -129882,7 +130068,7 @@ bool bvhIntersectFogVolumeHit(
 	                    struct2CoorHash[chainidpair][mmdbid_t] = struct2CoorHash[chainidpair][mmdbid_t].concat(result.coor);
 	                    struct2resid[chainidpair][mmdbid_t] = struct2resid[chainidpair][mmdbid_t].concat(result.resid);
 
-	                    // slave
+	                    // query
 	                    resiArray = predefinedResPair[1].split(",");
 
 	                    result = thisClass.getSeqCoorResid(resiArray, chainid); 
@@ -129910,7 +130096,7 @@ bool bvhIntersectFogVolumeHit(
 	                }
 	            }
 	            else {           
-	                if(i == 0) { // master
+	                if(i == 0) { // template
 	                    //base = parseInt(ic.chainsSeq[chainid][0].resi);
 
 	                    resiArray = [];
@@ -129950,7 +130136,7 @@ bool bvhIntersectFogVolumeHit(
 	                                bSelectedBoth = true;
 
 	                                let resn = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn;
-	                                struct2SeqHash[chainid] += me.utilsCls.residueName2Abbr(resn);
+	                                struct2SeqHash[chainid] += me.utilsCls.residueName2Abbr(resn, true);
 
 	                                struct2CoorHash[chainid] = struct2CoorHash[chainid].concat(this.getResCoorArray(resid));
 
@@ -132265,9 +132451,6 @@ bool bvhIntersectFogVolumeHit(
 	                atm.coord = new Vector3$1(atm.coord.x, atm.coord.y, atm.coord.z);
 	            }
 
-	            // let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
-	            let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn);
-
 	            if((type === 'mmdbid' || type === 'align') && ic.bFullUi ) {
 	                // set ic.mmdbMolidResid2mmdbChainResi
 	                if(ic.mmdbMolidResid2mmdbChainResi === undefined) ic.mmdbMolidResid2mmdbChainResi = {};
@@ -132409,6 +132592,8 @@ bool bvhIntersectFogVolumeHit(
 	                }
 	            }
 
+	            // let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
+	            let oneLetterRes = (atm.het) ? me.utilsCls.residueName2Abbr(atm.resn) : me.utilsCls.residueName2Abbr(atm.resn, true);
 	            ic.residueId2Name[residueid] = oneLetterRes;
 
 	            let secondaries = '-';
@@ -132756,11 +132941,11 @@ bool bvhIntersectFogVolumeHit(
 	          ic.nconsHash2 = {};
 	          ic.nalignHash2 = {};
 
-	          let msaSameColor = [];
-	          // assume all aligned seq are the same. If any aligned res is different,set it to false (0)
-	          for(let i = 0, il = seqalign[0].length; i < il; ++i) {
-	            msaSameColor.push(1);
-	          }
+	        //   let msaSameColor = [];
+	        //   // assume all aligned seq are the same. If any aligned res is different,set it to false (0)
+	        //   for(let i = 0, il = seqalign[0].length; i < il; ++i) {
+	        //     msaSameColor.push(1);
+	        //   }
 
 	          for(let i = 0, il = seqalign.length; i < il; ++i) {
 	            // first sequence
@@ -132769,44 +132954,30 @@ bool bvhIntersectFogVolumeHit(
 
 	            let chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
 	            chainid1 = mmdbid1 + '_' + chain1;
-
-	            let id2aligninfo = {};
-	            let start = alignData.sequence.length, end = -1;
-	            let bStart = false;
+	            alignData.sequence.length;
 	            for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
 	                // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-	                let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
-	                let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
-	                resn =(resn === ' ' || resn === '') ? 'X' : resn;
+	                (ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
+	                (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
 
-	                let aligned =(alignData.sequence[j][3]) ? 1 : 0;
-
-	                if(aligned == 1) {
-	                    if(j < start && !bStart) {
-	                        start = j;
-	                        bStart = true; // set start just once
-	                    }
-	                    if(j > end) end = j;
-	                }
-
-	                id2aligninfo[j] = {"resi": resi, "resn": resn, "aligned": aligned};
+	                (alignData.sequence[j][3]) ? 1 : 0;
 	            }
 
 	            // second sequence
 	            alignData = seqalign[i][1];
 
-	            for(let j = start; j <= end; ++j) {
-	                // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-	                let alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; 
+	            // for(let j = start; j <= end; ++j) {
+	            //     // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
+	            //     let alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; 
 
-	                let aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
+	            //     let aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
 
-	                if(aligned === 2) { // aligned
-	                    if(id2aligninfo[j].resn != resn) {
-	                        msaSameColor[j] = 0;
-	                    }
-	                }
-	            }
+	            //     if(aligned === 2) { // aligned
+	            //         if(id2aligninfo[j].resn != resn) {
+	            //             msaSameColor[j] = 0;
+	            //         }
+	            //     }
+	            // }
 	          }
 
 	          for(let i = 0, il = seqalign.length; i < il; ++i) {
@@ -132905,7 +133076,7 @@ bool bvhIntersectFogVolumeHit(
 	                          ic.nconsHash2[chainid2 + '_' + resi] = 1;
 	                      }
 
-	                      color = (msaSameColor[j] == 0) ? '#0000FF' : '#FF0000';
+	                    //   color = (msaSameColor[j] == 0) ? '#0000FF' : '#FF0000';
 
 	                      // mapping, use the firstsequence as the reference structure
 	                      ic.chainsMapping[chainid1][chainid1 + '_' + id2aligninfo[j].resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
@@ -132924,7 +133095,7 @@ bool bvhIntersectFogVolumeHit(
 	                      ic.nalignHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
 	                      ic.nalignHash2[chainid2 + '_' + resi] = 1;
 
-	                      msaSameColor[j] = 2; // not aligned
+	                    //   msaSameColor[j] = 2; // not aligned
 	                  }
 
 	                  // chain1
@@ -133049,8 +133220,7 @@ bool bvhIntersectFogVolumeHit(
 	        return pos;
 	    }
 
-	    getResnFromResi(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
-	        /*
+	    getResnFromResi(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
 	        let pos = this.getPosFromResi(chainid, resi);
 	        if(!pos) return '?';
 
@@ -133065,8 +133235,8 @@ bool bvhIntersectFogVolumeHit(
 	        }
 
 	        return resn;
-	        */
 
+	/*
 	        let resid = chainid + '_' + resi;
 	        let resn = ic.residueId2Name[resid];
 	        if(!resn) {
@@ -133074,6 +133244,7 @@ bool bvhIntersectFogVolumeHit(
 	        }
 
 	        return resn;
+	*/
 	    }
 
 	    getResiAferAlign(chainid, bRealign, pos) { let ic = this.icn3d, me = ic.icn3dui;
@@ -133418,7 +133589,7 @@ bool bvhIntersectFogVolumeHit(
 	                let start1, end1;
 	                
 	                //ic.qt_start_end is zero-based
-	                if(!bRealign && me.cfg.aligntool != 'tmalign') { // vast alignment
+	                if(!bRealign && me.cfg.aligntool != 'tmalign') { // vast alignment or seqalign
 	                    start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
 	                    end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
 	                }
@@ -133453,15 +133624,18 @@ bool bvhIntersectFogVolumeHit(
 
 	        let resid2rangeArray = Object.keys(resid2range_t);
 	        resid2rangeArray.sort(function(a, b) {
-	            return parseInt(a.split('_')[2]) - parseInt(b.split('_')[2]);
+	            let idArray1 = me.utilsCls.getIdArray(a);
+	            let idArray2 = me.utilsCls.getIdArray(b);
+	            return parseInt(idArray1[2]) - parseInt(idArray2[2]);
 	        });
 
 	        // assign range to each resi
 	        let prevResi = -999, start = 0, end = 0, residArray = [], prevEnd = 0;
 	        for(let i = 0, il = resid2rangeArray.length; i < il; ++i) {
 	            let resid = resid2rangeArray[i];
-	            let resi = resid.split('_')[2];
-	            
+	            let idArray = me.utilsCls.getIdArray(resid);
+	            let resi = idArray[2];
+
 	            if(i == 0) {
 	                start = resi;
 	            }
@@ -133500,7 +133674,9 @@ bool bvhIntersectFogVolumeHit(
 	            let resid = chainid1 + '_' + resi;
 
 	            // let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
-	            let jAdjusted = ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
+	            //let jAdjusted = ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
+	            //!!!
+	            let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
 
 	            //if(j + baseResi < start_t || j + baseResi > end_t) {
 	            if(jAdjusted < start_t || jAdjusted > end_t) {    
@@ -133701,21 +133877,23 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	    }
 
-	    getTemplatePosFromOriResi(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
-	        // let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
-	        // let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
-	        if(bRealign && me.cfg.aligntool == 'tmalign') { // vast alignment
-	            let startResi = start;
-	            let endResi = end;
+	    getTemplatePosFromOriPos(chainid1, start, end, bRealign) { let ic = this.icn3d; ic.icn3dui;
+	        //!!!
+	        let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
+	        let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
+
+	        // if(bRealign && me.cfg.aligntool == 'tmalign') { // vast alignment
+	        //     let startResi = start;
+	        //     let endResi = end;
 
 	            let result1 = this.getResiPosInTemplate(chainid1, startResi);
 	            let result2 = this.getResiPosInTemplate(chainid1, endResi);
 	    
 	            return {"pos1": result1.pos, "pos2": result2.pos};
-	        }
-	        else {
-	            return {"pos1": start, "pos2": end};
-	        }
+	        // }
+	        // else {
+	        //    return {"pos1": start, "pos2": end};
+	        // }
 	    }
 
 	    mergeTwoSeqForAll(chainidArray, index, alignedChainIndice, resid2range_t, start_t, end_t, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -133787,11 +133965,11 @@ bool bvhIntersectFogVolumeHit(
 	            start_t = ic.ParserUtilsCls.getResi(chainid1, start_t);
 	            end_t = ic.ParserUtilsCls.getResi(chainid1, end_t);
 	        }
-
+	console.log("### me.cfg.aligntool " + me.cfg.aligntool + " bRealign " + bRealign );
 	        for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
-	            let start1, start2, end1, end2, resiStart1, start1Pos;
+	            let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
 	          
-	            if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
+	            if(bRealign && (me.cfg.aligntool == 'tmalign')) { // real residue numbers are stored
 	                start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
 	                start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
 	                end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
@@ -133805,7 +133983,7 @@ bool bvhIntersectFogVolumeHit(
 	                // 1. before the mapped residues
 	                resiStart1 = start1;
 	                start1Pos = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
-	                this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
+	                end1Pos = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
 	            }
 	            else {
 	                start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
@@ -133816,6 +133994,7 @@ bool bvhIntersectFogVolumeHit(
 	                // 1. before the mapped residues
 	                resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
 	                start1Pos = start1;
+	                end1Pos = end1;
 	            }
 	            //let range = resid2range_t[chainid1 + '_' + resiStart1];
 
@@ -133823,13 +134002,15 @@ bool bvhIntersectFogVolumeHit(
 	            if(i == 0) {
 	                startPosInTemplate = start1Pos;
 
-	                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
-	                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
+	                //!!!
+	                // result = this.getTemplatePosFromOriPos(chainid1, start_t, start1, bRealign);
+	                result = this.getTemplatePosFromOriPos(chainid1, start_t, start1Pos, bRealign);
 	                pos1 = result.pos1;
 	                pos2 = result.pos2;
 
-	                if(start1 > start_t) {
-	                //if(start1Pos > start_t) {
+	                //!!!
+	                // if(start1 > start_t) {
+	                if(start1Pos > start_t) {
 	                    for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
 	                        ic.alnChainsSeq[chainid2].push(gapResObject2);
 	                    }
@@ -133837,7 +134018,7 @@ bool bvhIntersectFogVolumeHit(
 	            }
 	            else {
 	                //let notAlnLen1 = start1 - (prevIndex1 + 1);
-	                result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, start1, bRealign);
+	                result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, start1, bRealign);
 	                pos1 = result.pos1;
 	                pos2 = result.pos2;
 	                let notAlnLen1 = pos2 - (pos1 + 1);
@@ -133862,15 +134043,16 @@ bool bvhIntersectFogVolumeHit(
 	            }
 
 	            // 2. In the mapped residues
-	            result = this.getTemplatePosFromOriResi(chainid1, start1, end1, bRealign);
-	            //result = this.getTemplatePosFromOriResi(chainid1, start1Pos, end1Pos, bRealign);
+	            // result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
+	            result = this.getTemplatePosFromOriPos(chainid1, start1Pos, end1Pos, bRealign);
 	            pos1 = result.pos1;
 	            pos2 = result.pos2;
 
 	            let k = 0;    
 	            if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
 	            if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
-	            let resiAdjust = (bRealign && me.cfg.aligntool == 'tmalign') ? 0 : - startPosInTemplate + nGapInTemplate; 
+	            //!!!!!!
+	            let resiAdjust = ((bRealign && me.cfg.aligntool == 'tmalign') || me.cfg.aligntool == 'seqalign') ? 0 : - startPosInTemplate + nGapInTemplate; 
 	            for(let j = pos1; j <= pos2; ++j) {
 	                // inherit the gaps from the template
 	                if(ic.alnChainsSeq[chainid1][j + resiAdjust].resn == '-') {
@@ -133905,7 +134087,7 @@ bool bvhIntersectFogVolumeHit(
 	        } 
 
 	        // add gaps at the end
-	        result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, end_t, bRealign);
+	        result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
 	        pos1 = result.pos1;
 	        pos2 = result.pos2;
 	        for(let i = pos1; i < pos2; ++i) {
@@ -134241,7 +134423,7 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	    }   
 
-	    setMsaFormat(chainidArray) { let ic = this.icn3d; ic.icn3dui;
+	    setMsaFormat(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
 	        //set MSA
 	        let fastaFormat = '', clustalwFormat = 'CLUSTALWW\n\n', resbyresFormat = '';
 	        let chainArrayClustal = [];
@@ -134253,7 +134435,9 @@ bool bvhIntersectFogVolumeHit(
 	            fastaFormat += '>' + chainid + '\n';
 
 	            let clustalwArray = [];
-	            let clustalwLine = chainid.padEnd(20, ' ');
+	            let itemArray = me.utilsCls.getIdArray(chainid);
+	            let chainidStr = 'pdb|' + itemArray[0] + '|' + itemArray[1];
+	            let clustalwLine = chainidStr.padEnd(20, ' ');
 	            let consLine = ''.padEnd(20, ' ');
 
 	            let resiArrayTarget = [], resiArrayQuery = [];
@@ -134793,7 +134977,7 @@ bool bvhIntersectFogVolumeHit(
 	                //if(residueNum !== prevResidueNum) {
 	                    
 	                if(oriResidueNum !== prevOriResidueNum) {
-	                    let residue = me.utilsCls.residueName2Abbr(resn);
+	                    let residue = (atomDetails.het) ? me.utilsCls.residueName2Abbr(resn) : me.utilsCls.residueName2Abbr(resn, true);
 	                    ic.residueId2Name[residueNum] = residue;
 
 	                    if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;
@@ -135240,7 +135424,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        for(let chainid in chains) {
 	            if(pdbid !== undefined) {
-	                let textArray =  chainid.split('_');
+	                let textArray =  me.utilsCls.getIdArray(chainid);
 	                if(textArray[0] !== pdbid) continue; // skip different chain
 	            }
 
@@ -135348,15 +135532,15 @@ bool bvhIntersectFogVolumeHit(
 	    loadCIF(bcifData, bcifid, bText, bAppend, supercell) { let ic = this.icn3d, me = ic.icn3dui;
 	        ic.cifText = bText;
 	        ic.cifData = bcifData;
-	        
+
 	        if(supercell === undefined) {
-	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
 	        }
 	        else if(supercell === 0) {
-	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: false };
+	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
 	        }
 	        else {
-	            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true };
+	            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true, wholeMolecules: true, bondTolerance: 0.4 };
 	        }
 
 	        let hAtoms = {};
@@ -135372,7 +135556,7 @@ bool bvhIntersectFogVolumeHit(
 	        let serial, moleculeNum;
 	        // if(!bMutation && !bAppend) {
 	        if(!bAppend) {
-	            ic.init();
+	            ic.init(undefined, true); // keep original configurations, such as color, style, etc. when loading multiple structures
 	            moleculeNum = 0; //1;
 	            serial = 0;
 	        }
@@ -135416,11 +135600,13 @@ bool bvhIntersectFogVolumeHit(
 
 	            if (parsed.isError) {
 	                // report error:
-	                alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+	                alert("2 The Binary CIF data can NOT be parsed: " + parsed.toString());
 	                return;
 	            }
 
 	            let block = parsed.result.dataBlocks[0];
+
+	            if(!block) continue;
 	            
 	            if(block.getCategory("_entry")) {
 	                id = block.getCategory("_entry").getColumn("id").getString(0);
@@ -135659,6 +135845,8 @@ bool bvhIntersectFogVolumeHit(
 	                ic.cell.angle_alpha = parseFloat(block.getCategory("_cell").getColumn("angle_alpha").getString(0));
 	                ic.cell.angle_beta = parseFloat(block.getCategory("_cell").getColumn("angle_beta").getString(0));
 	                ic.cell.angle_gamma = parseFloat(block.getCategory("_cell").getColumn("angle_gamma").getString(0));
+
+	                me.htmlCls.clickMenuCls.setLogCmd("define unitcell | " + ic.cell.length_a + " | " + ic.cell.length_b + " | " + ic.cell.length_c + " | " + ic.cell.angle_alpha + " | " + ic.cell.angle_beta + " | " + ic.cell.angle_gamma, true);
 	            }
 
 	            // if (record === 'ENDMDL') {
@@ -136003,7 +136191,7 @@ bool bvhIntersectFogVolumeHit(
 	                    
 	                // if(oriResidueNum !== prevOriResidueNum) {
 	                if(oriResidueNum !== prevOriResidueNum || chain + "_" + resn != prevResn || prevAutochain != autochain) {
-	                    let residue = me.utilsCls.residueName2Abbr(resn);
+	                    let residue = (atomDetails.het) ? me.utilsCls.residueName2Abbr(resn) : me.utilsCls.residueName2Abbr(resn, true);
 	                   
 	                    ic.residueId2Name[residueNum] = residue;
 
@@ -137302,6 +137490,16 @@ bool bvhIntersectFogVolumeHit(
 	        ic.opts['unitcell'] = 'no';
 	        ic.drawCls.draw();
 	      }
+	      else if(command.indexOf('define unitcell') !== -1) {
+	        let itemArray = command.split(' | ');
+	        ic.cell = {};
+	        ic.cell.length_a = parseFloat(itemArray[1]);
+	        ic.cell.length_b = parseFloat(itemArray[2]);
+	        ic.cell.length_c = parseFloat(itemArray[3]);
+	        ic.cell.angle_alpha = parseFloat(itemArray[4]);
+	        ic.cell.angle_beta = parseFloat(itemArray[5]);
+	        ic.cell.angle_gamma = parseFloat(itemArray[6]);
+	      }
 	      else if(command == 'set fog on') {
 	        ic.opts['fog'] = 'yes';
 	        ic.fogCls.setFog(true);
@@ -137332,7 +137530,7 @@ bool bvhIntersectFogVolumeHit(
 	        let pos = command.lastIndexOf(' ');
 	        let supercell = parseInt(command.substr(pos + 1));
 
-	        await me.htmlCls.clickMenuCls.setSupercell(supercell);
+	        me.htmlCls.clickMenuCls.setSupercell(supercell);
 	      }
 	      else if(command == 'set chemicalbinding show') {
 	        ic.setOptionCls.setOption('chemicalbinding', 'show');
@@ -137767,7 +137965,8 @@ bool bvhIntersectFogVolumeHit(
 	      else if(commandOri.indexOf('select interaction') == 0) {
 	        let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
 	        if(idArray !== null) {
-	            let mmdbid = idArray[0].split('_')[0];
+	            let itemArray = me.utilsCls.getIdArray(idArray[0]);
+	            let mmdbid = itemArray[0];
 	            if(!ic.b2DShown) ic.ParserUtilsCls.download2Ddgm(mmdbid.toUpperCase());
 
 	            ic.diagram2dCls.selectInteraction(idArray[0], idArray[1]);
@@ -139613,7 +139812,7 @@ bool bvhIntersectFogVolumeHit(
 
 	    }
 
-	    selectCombinedSets(strSets, commandname) { let ic = this.icn3d; ic.icn3dui;
+	    selectCombinedSets(strSets, commandname) { let ic = this.icn3d, me = ic.icn3dui;
 	        let idArray = strSets.split(' ');
 
 	        let orArray = [], andArray = [], notArray = [];
@@ -139621,7 +139820,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        for(let i = 0, il = idArray.length; i < il; ++i) {
 	            // replace 1CD8_A_1 with 1CD8_A1
-	            let tmpArray = idArray[i].split('_');
+	            let tmpArray = me.utilsCls.getIdArray(idArray[i]);
 	            if(tmpArray.length == 3 && !isNaN(tmpArray[2])) {
 	                idArray[i] = tmpArray[0] + '_' + tmpArray[1] + tmpArray[2];
 	            }
@@ -140623,7 +140822,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        // load pdb, mmcif, mmdb, cid
 	        let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
-	        if(id.length == 4) id = id.toUpperCase();
+	        if(id.length == 4 || id.indexOf('pdb_') == 0) id = id.toUpperCase();
 
 	        // skip loading the structure if 
 	        // 1. PDB was in the iCn3D PNG Image file
@@ -140669,6 +140868,10 @@ bool bvhIntersectFogVolumeHit(
 	        else if(command.indexOf('load mmcif') !== -1) {
 	          me.cfg.mmcifid = id;
 	          await ic.mmcifParserCls.downloadMmcif(id);
+	        }
+	        else if(command.indexOf('load cod') !== -1) {
+	          me.cfg.codid = id;
+	          await ic.mmcifParserCls.downloadCod(id);
 	        }
 	        else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
 	          me.cfg.mmdbid = id;
@@ -141184,7 +141387,7 @@ bool bvhIntersectFogVolumeHit(
 
 	           // convert 1TOP_A:20 to $1TOP.A:20
 	           if(commandArray[i].indexOf('_') !== -1) {
-	             let itemArray = commandArray[i].split('_');
+	             let itemArray = me.utilsCls.getIdArray(commandArray[i]);
 	             if(itemArray.length ==2 ) {
 	              commandArray[i] = '$' + itemArray[0] + '.' + itemArray[1];
 	             }
@@ -144065,24 +144268,6 @@ bool bvhIntersectFogVolumeHit(
 	                if(!me.bNode) console.log("domainid: " + domainid);
 	            }
 
-	            // count the number of matched strands
-	            // let strandHash = {};
-	            // for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
-	            //     let seg = queryData[0].segs[j];
-	            //     let q_start = parseInt(seg.q_start)
-
-	            //     let strand = this.getStrandFromRefnum(q_start);
-	            //     strandHash[strand] = 1;
-	            // }
-
-	            // let tmAdjust = 0.1; 
-
-	            // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
-	            // if(!domainid2segs.hasOwnProperty(domainid) || 
-	            //     (score >= parseFloat(ic.domainid2score[domainid].split('_')[0]) + tmAdjust)
-	            //     || (score >= parseFloat(ic.domainid2score[domainid].split('_')[0]) - tmAdjust && score < parseFloat(ic.domainid2score[domainid].split('_')[0]) + tmAdjust && Object.keys(strandHash).length > domainid2strandcnt[domainid])
-	            //     ) {
-
 	            // use TM-score alone
 	            if(!domainid2segs.hasOwnProperty(domainid) || score >= parseFloat(ic.domainid2score[domainid].split('_')[0])) {      
 	                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res + '_' + queryData[0].score2;
@@ -145414,7 +145599,7 @@ bool bvhIntersectFogVolumeHit(
 	        let snpArray = snp.split(','); //stru_chain_resi_snp
 	        let atomHash = {}, snpResidArray = [], chainResi2pdb = {};
 	        for(let i = 0, il = snpArray.length; i < il; ++i) {
-	            let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
+	            let idArray = me.utilsCls.getIdArray(snpArray[i]); //stru_chain_resi_snp
 
 	            let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
 	            atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);
@@ -148566,7 +148751,8 @@ bool bvhIntersectFogVolumeHit(
 	            if(refnumLabel) {
 	                refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
 	                if(!ic.refnum2resn[domainid]) ic.refnum2resn[domainid] = {};
-	                ic.refnum2resn[domainid][refnumStr] = resn + resid.split('_')[2];
+	                let idArray = me.utilsCls.getIdArray(resid);
+	                ic.refnum2resn[domainid][refnumStr] = resn + idArray[2];
 	            }
 	        }
 
@@ -150066,7 +150252,8 @@ bool bvhIntersectFogVolumeHit(
 	                let width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
 	                let height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
 
-	                if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
+	                // if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
+	                if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height, true, true);
 	            });
 	        }
 	    }
@@ -154816,8 +155003,8 @@ bool bvhIntersectFogVolumeHit(
 	  }
 	}
 	//When users first load a structure, call this function to empty previous settings.
-	iCn3D.prototype.init = function (bKeepCmd) {
-	    this.init_base();
+	iCn3D.prototype.init = function (bKeepCmd, bKeepConfig) {
+	    this.init_base(bKeepCmd, bKeepConfig);
 
 	    this.molTitle = "";
 
@@ -154837,8 +155024,8 @@ bool bvhIntersectFogVolumeHit(
 	    this.axes = [];
 	};
 
-	iCn3D.prototype.init_base = function (bKeepCmd) {
-	    this.resetConfig();
+	iCn3D.prototype.init_base = function (bKeepCmd, bKeepConfig) {
+	    if(!bKeepConfig) this.resetConfig();
 	    
 	    this.structures = {}; // structure name -> array of chains
 	    this.chains = {}; // structure_chain name -> atom hash
@@ -155028,7 +155215,7 @@ bool bvhIntersectFogVolumeHit(
 	    //even when multiple iCn3D viewers are shown together.
 	    this.pre = this.cfg.divid + "_";
 
-	    this.REVISION = '3.54.3';
+	    this.REVISION = '3.54.4';
 
 	    // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
 	    this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -155230,7 +155417,7 @@ bool bvhIntersectFogVolumeHit(
 	            let domainidArray = me.cfg.matchedchains.split(',');
 	            let chainidArray = [];
 	            for(let i = 0, il = domainidArray.length; i  < il; ++i) {
-	                let idArray = domainidArray[i].split('_');
+	                let idArray = me.utilsCls.getIdArray(domainidArray[i]);
 	                chainidArray.push(idArray[0] + '_' + idArray[1]);
 	            }
 
@@ -155273,14 +155460,14 @@ bool bvhIntersectFogVolumeHit(
 	        await ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
 	    }
 	    else if(me.cfg.mmtfid !== undefined) {
-	        if(me.cfg.mmtfid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmtfid = me.cfg.mmtfid.substr(8); // temperary support long PDB ID such as pdb_00001tup
+	        // if(me.cfg.mmtfid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmtfid = me.cfg.mmtfid.substr(8); // temperary support long PDB ID such as pdb_00001tup
 	       ic.inputid = me.cfg.mmtfid;
 	       ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
 	       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 	       await ic.bcifParserCls.downloadBcif(me.cfg.mmtfid);
 	    }
 	    else if(me.cfg.bcifid !== undefined) {
-	        if(me.cfg.bcifid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.bcifid = me.cfg.bcifid.substr(8); // temperary support long PDB ID such as pdb_00001tup
+	        // if(me.cfg.bcifid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.bcifid = me.cfg.bcifid.substr(8); // temperary support long PDB ID such as pdb_00001tup
 	        ic.inputid = me.cfg.bcifid;
 	        ic.loadCmd = 'load bcif ' + me.cfg.bcifid;
 	        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -155455,6 +155642,12 @@ bool bvhIntersectFogVolumeHit(
 	        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 	        await ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
 	    }
+	    else if(me.cfg.codid !== undefined) {
+	        ic.inputid = me.cfg.codid;
+	        ic.loadCmd = 'load cod ' + me.cfg.codid;
+	        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+	        await ic.mmcifParserCls.downloadCod(me.cfg.codid);
+	    }
 	    else if(me.cfg.align !== undefined) {
 	        // ic.bNCBI = true;
 	        if(me.cfg.align.indexOf('185055,') != -1) {
@@ -155615,6 +155808,8 @@ bool bvhIntersectFogVolumeHit(
 
 	                   reject('error');
 	                }
+
+	                me.icn3d.ParserUtilsCls.hideLoading();
 	            }
 	            else {
 	                me.icn3d.ParserUtilsCls.showLoading();
@@ -155766,18 +155961,6 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	    });
 	};
-
-	/*
-	iCn3DUI.prototype.setIcn3dui = function(id) { let me = this;
-	    let idArray = id.split('_'); // id: div0_reload_pdbfile
-	    ic.pre = idArray[0] + "_";
-	    if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
-	       me = window.icn3duiHash[idArray[0]];
-	    }
-	    return me;
-	};
-	*/
-
 
 	// required by npm
 	class printMsg {

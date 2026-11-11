@@ -35,7 +35,8 @@ class OpmParser {
             if(!pdbid) pdbid = ic.defaultPdbId;
 
             //if(me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined) { // skip opm for bcif files
-                let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+                let shortPdbid = pdbid.indexOf('pdb_0000') == 0 ? pdbid.substr(8) : pdbid;
+                let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + shortPdbid.toLowerCase();
 
                 let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
         
