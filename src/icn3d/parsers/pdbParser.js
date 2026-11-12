@@ -139,8 +139,8 @@ class PdbParser {
     async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bAppend && (type === undefined || type === 'target')) {
             // if a command contains "load...", the commands should not be cleared with init()
-            let bKeepCmd = (ic.bCommandLoad) ? true : false;
-            if(!ic.bStatefile) ic.init(bKeepCmd);
+            let bClearCmd = (ic.bCommandLoad) ? false : true;
+            if(!ic.bStatefile) ic.init(bClearCmd);
         }
 
         let hAtoms = await ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library

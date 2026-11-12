@@ -61606,7 +61606,7 @@ void main() {
 	        //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
 	        html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
 	        html += "<ul>";
-	        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+	        //html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
 	        //html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
 	        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold' + me.htmlCls.wifiStr, undefined, 2);
 	        html += "</ul>";
@@ -63211,7 +63211,6 @@ void main() {
 	                      if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
 	                  }
 	                  else {
-	                      //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
 	                      ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
 	                  }
 	              }
@@ -63300,7 +63299,6 @@ void main() {
 	              let status = thisClass.getDialogStatus().status;
 
 	              if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bHbondplot2) &&(!status.bLigplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
-	                    //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
 	                    ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
 	              }
 	          },
@@ -63345,8 +63343,7 @@ void main() {
 	                }
 	            }
 	            else {
-	                //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) * 0.5, true);
-	                ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH,(me.htmlCls.HEIGHT) * 0.5, true);
+	                //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH,(me.htmlCls.HEIGHT) * 0.5, true);
 
 	                //height =(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) * 0.5;
 	                height =(me.htmlCls.HEIGHT) * 0.5;
@@ -63386,7 +63383,6 @@ void main() {
 	                              if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
 	                          }
 	                          else {
-	                              //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
 	                              ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
 	                          }
 	                      }
@@ -65519,7 +65515,20 @@ void main() {
 	        let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
 
 	        if(nameArray.length == 0) {
-	            nameArray = $("#" + me.pre + "atomsCustom").val();
+	            // nameArray = $("#" + me.pre + "atomsCustom").val();
+	            
+	            // choose the first chain for each structure
+	            nameArray = [];
+	            let structureHash = {};
+	            let chains = ic.resid2specCls.atoms2chains(ic.hAtoms);
+
+	            for(let chainid in chains) {
+	                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+	                if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+	                    nameArray.push(chainid);
+	                    structureHash[atom.structure] = 1;
+	                }
+	            }
 	        }
 
 	        if(nameArray.length > 0) {
@@ -65539,20 +65548,6 @@ void main() {
 	        }
 
 	        if(bMsa) {
-	            // choose the first chain for each structure
-	            if(nameArray.length == 0) {
-	                nameArray = [];
-	                let structureHash = {};
-	                
-	                for(let chainid in ic.chains) {
-	                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
-	                    if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
-	                        nameArray.push(chainid);
-	                        structureHash[atom.structure] = 1;
-	                    }
-	                }
-	            }
-
 	            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
 	        }
 	        else {
@@ -126043,8 +126038,8 @@ bool bvhIntersectFogVolumeHit(
 
 	        if(type === undefined || type === 'target') {
 	            // if a command contains "load...", the commands should not be cleared with init()
-	            let bKeepCmd = (ic.bCommandLoad) ? true : false;
-	            if(!ic.bStatefile) ic.init(bKeepCmd);
+	            let bClearCmd = (ic.bCommandLoad) ? false : true;
+	            if(!ic.bStatefile) ic.init(bClearCmd);
 
 	            ic.chainsColor = {};
 	            ic.chainsGene = {};
@@ -127512,8 +127507,8 @@ bool bvhIntersectFogVolumeHit(
 	    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
 	        if(!bAppend && (type === undefined || type === 'target')) {
 	            // if a command contains "load...", the commands should not be cleared with init()
-	            let bKeepCmd = (ic.bCommandLoad) ? true : false;
-	            if(!ic.bStatefile) ic.init(bKeepCmd);
+	            let bClearCmd = (ic.bCommandLoad) ? false : true;
+	            if(!ic.bStatefile) ic.init(bClearCmd);
 	        }
 
 	        let hAtoms = await ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library
@@ -130001,6 +129996,7 @@ bool bvhIntersectFogVolumeHit(
 	        let predefinedResArray, predefinedResPair;
 
 	        if(bPredefined) {
+	            me.cfg.resdef = decodeURIComponent(me.cfg.resdef).trim();
 	            let tmpStr = me.cfg.resdef.replace(/; /gi, ': ');
 	            // predefinedResArray = decodeURIComponent(tmpStr).trim().replace(/\+/gi, ' ').split(': ');
 	            predefinedResArray = tmpStr.replace(/\+/gi, ' ').split(': ');
@@ -132941,45 +132937,6 @@ bool bvhIntersectFogVolumeHit(
 	          ic.nconsHash2 = {};
 	          ic.nalignHash2 = {};
 
-	        //   let msaSameColor = [];
-	        //   // assume all aligned seq are the same. If any aligned res is different,set it to false (0)
-	        //   for(let i = 0, il = seqalign[0].length; i < il; ++i) {
-	        //     msaSameColor.push(1);
-	        //   }
-
-	          for(let i = 0, il = seqalign.length; i < il; ++i) {
-	            // first sequence
-	            let alignData = seqalign[i][0];
-	            let molid1 = alignData.moleculeId;
-
-	            let chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
-	            chainid1 = mmdbid1 + '_' + chain1;
-	            alignData.sequence.length;
-	            for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
-	                // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-	                (ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
-	                (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
-
-	                (alignData.sequence[j][3]) ? 1 : 0;
-	            }
-
-	            // second sequence
-	            alignData = seqalign[i][1];
-
-	            // for(let j = start; j <= end; ++j) {
-	            //     // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-	            //     let alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; 
-
-	            //     let aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
-
-	            //     if(aligned === 2) { // aligned
-	            //         if(id2aligninfo[j].resn != resn) {
-	            //             msaSameColor[j] = 0;
-	            //         }
-	            //     }
-	            // }
-	          }
-
 	          for(let i = 0, il = seqalign.length; i < il; ++i) {
 	              // first sequence
 	              let alignData = seqalign[i][0];
@@ -133076,8 +133033,6 @@ bool bvhIntersectFogVolumeHit(
 	                          ic.nconsHash2[chainid2 + '_' + resi] = 1;
 	                      }
 
-	                    //   color = (msaSameColor[j] == 0) ? '#0000FF' : '#FF0000';
-
 	                      // mapping, use the firstsequence as the reference structure
 	                      ic.chainsMapping[chainid1][chainid1 + '_' + id2aligninfo[j].resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
 	                      ic.chainsMapping[chainid2][chainid2 + '_' + resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
@@ -133094,8 +133049,6 @@ bool bvhIntersectFogVolumeHit(
 
 	                      ic.nalignHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
 	                      ic.nalignHash2[chainid2 + '_' + resi] = 1;
-
-	                    //   msaSameColor[j] = 2; // not aligned
 	                  }
 
 	                  // chain1
@@ -133220,7 +133173,8 @@ bool bvhIntersectFogVolumeHit(
 	        return pos;
 	    }
 
-	    getResnFromResi(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
+	    getResnFromResi(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
+	        /*
 	        let pos = this.getPosFromResi(chainid, resi);
 	        if(!pos) return '?';
 
@@ -133235,8 +133189,8 @@ bool bvhIntersectFogVolumeHit(
 	        }
 
 	        return resn;
+	        */
 
-	/*
 	        let resid = chainid + '_' + resi;
 	        let resn = ic.residueId2Name[resid];
 	        if(!resn) {
@@ -133244,7 +133198,6 @@ bool bvhIntersectFogVolumeHit(
 	        }
 
 	        return resn;
-	*/
 	    }
 
 	    getResiAferAlign(chainid, bRealign, pos) { let ic = this.icn3d, me = ic.icn3dui;
@@ -133475,7 +133428,7 @@ bool bvhIntersectFogVolumeHit(
 	                      }
 	                  }
 	              }
-
+	            
 	              for(let j = 0; j <= end1 - start1; ++j) {
 	                  ///if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -133588,29 +133541,43 @@ bool bvhIntersectFogVolumeHit(
 	            for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
 	                let start1, end1;
 	                
-	                //ic.qt_start_end is zero-based
-	                if(!bRealign && me.cfg.aligntool != 'tmalign') { // vast alignment or seqalign
-	                    start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
-	                    end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
-	                }
-	                else {
-	                    start1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_start) - 1;
-	                    end1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_end) - 1;
-	                }
-
+	                // if(bRealign) { // real residue numbers are stored
+	                //     start1 = ic.qt_start_end[chainIndex][i].t_start;
+	                //     end1 = ic.qt_start_end[chainIndex][i].t_end;
+	                // }
+	                // else {
+	                    //ic.qt_start_end is zero-based
+	                    if(!bRealign && me.cfg.aligntool != 'tmalign') { // vast alignment
+	                        start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
+	                        end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
+	                    }
+	                    else {
+	                        start1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_start) - 1;
+	                        end1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_end) - 1;
+	                    }
+	                // }
 	                for(let j = start1; j <= end1; ++j) {
 	                    let resi, resid;
 
-	                    // let resiPos;
-	                    // if(me.cfg.aligntool == 'tmalign') {
-	                    //     resiPos = j - baseResi;
+	                    // if(me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
+	                    //     resi = ic.qt_start_end[chainIndex][i].t_start;
 	                    // }
 	                    // else {
-	                    //     resiPos = j;
+	                        // let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+	                        // let resiPos;
+	                        // if(me.cfg.aligntool == 'tmalign') {
+	                        //     resiPos = j - baseResi;
+	                        // }
+	                        // else {
+	                        //     // resiPos = (bRealign) ? j : j - baseResi;
+	                        //     resiPos = j;
+	                        // }
+
+	                        let resiPos = j;
+
+	                        resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+	                        resid = chainidArray[0] + '_' + resi;
 	                    // }
-	                    let resiPos = j;
-	                    resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
-	                    resid = chainidArray[0] + '_' + resi;
 
 	                    resid2range_t[resid] = 1;
 	                    if(j < start_t) start_t = j;
@@ -133624,6 +133591,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        let resid2rangeArray = Object.keys(resid2range_t);
 	        resid2rangeArray.sort(function(a, b) {
+	            // return parseInt(a.split('_')[2]) - parseInt(b.split('_')[2]);
 	            let idArray1 = me.utilsCls.getIdArray(a);
 	            let idArray2 = me.utilsCls.getIdArray(b);
 	            return parseInt(idArray1[2]) - parseInt(idArray2[2]);
@@ -133635,7 +133603,7 @@ bool bvhIntersectFogVolumeHit(
 	            let resid = resid2rangeArray[i];
 	            let idArray = me.utilsCls.getIdArray(resid);
 	            let resi = idArray[2];
-
+	            
 	            if(i == 0) {
 	                start = resi;
 	            }
@@ -133674,9 +133642,7 @@ bool bvhIntersectFogVolumeHit(
 	            let resid = chainid1 + '_' + resi;
 
 	            // let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
-	            //let jAdjusted = ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
-	            //!!!
-	            let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
+	            let jAdjusted = (me.cfg.aligntool == 'seqalign') ? j : ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
 
 	            //if(j + baseResi < start_t || j + baseResi > end_t) {
 	            if(jAdjusted < start_t || jAdjusted > end_t) {    
@@ -133694,6 +133660,7 @@ bool bvhIntersectFogVolumeHit(
 	            resObject.color2 = (resid2range_t[resid]) ? '#FF0000' : me.htmlCls.GREYC; // color by conservation
 	            // resObject.class = (resid2range_t[resid]) ? 'icn3d-align' : 'icn3d-nalign';
 	            resObject.class = (resid2range_t[resid]) ? 'icn3d-cons' : 'icn3d-nalign';
+	    
 	            ic.alnChainsSeq[chainid1].push(resObject);
 
 	            if(resid2range_t[resid]) {
@@ -133827,7 +133794,7 @@ bool bvhIntersectFogVolumeHit(
 	        if(ic.alnChainsSeq[chainid1]) {
 	            for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
 	                //add gap before the mapping region       
-	                //if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
+	                // if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
 	                if(ic.alnChainsSeq[chainid1][j].resi == resi_t) {
 	                    pos_t = j;
 	                    break;
@@ -133853,7 +133820,6 @@ bool bvhIntersectFogVolumeHit(
 	        for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
 	            let chainidTmp = chainidArray[alignedChainIndice[j]];
 	            let gapResObject = this.getResObject(chainidTmp, true);
-	            
 	            //for(let k = 0, kl = len - nGap; k < kl; ++k) {
 	            for(let k = 0, kl = len; k < kl; ++k) {
 	                ic.alnChainsSeq[chainidTmp].splice(pos_t, 0, gapResObject);
@@ -133870,6 +133836,7 @@ bool bvhIntersectFogVolumeHit(
 	            // let resn2 = this.getResn(chainid, start + j);
 	            let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start + j : ic.ParserUtilsCls.getResi(chainid, start + j);
 	            let resn2 = this.getResnFromResi(chainid, resi2);
+
 	            let resn1 = '-';
 	            let bAlign = false;
 	            let resObject = this.getResObject(chainid, false, bAlign, resi2, resn2, resn1);
@@ -133878,22 +133845,28 @@ bool bvhIntersectFogVolumeHit(
 	    }
 
 	    getTemplatePosFromOriPos(chainid1, start, end, bRealign) { let ic = this.icn3d; ic.icn3dui;
-	        //!!!
 	        let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
 	        let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
+	            
+	        let result1 = this.getResiPosInTemplate(chainid1, startResi);
+	        let result2 = this.getResiPosInTemplate(chainid1, endResi);
+	        
+	        return {"pos1": result1.pos, "pos2": result2.pos};
+	    }
 
-	        // if(bRealign && me.cfg.aligntool == 'tmalign') { // vast alignment
-	        //     let startResi = start;
-	        //     let endResi = end;
+	    getTemplatePosFromOriResi(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+	        if(bRealign && me.cfg.aligntool == 'tmalign') { // vast alignment
+	            let startResi = start;
+	            let endResi = end;
 
 	            let result1 = this.getResiPosInTemplate(chainid1, startResi);
 	            let result2 = this.getResiPosInTemplate(chainid1, endResi);
 	    
 	            return {"pos1": result1.pos, "pos2": result2.pos};
-	        // }
-	        // else {
-	        //    return {"pos1": start, "pos2": end};
-	        // }
+	        }
+	        else {
+	            return {"pos1": start, "pos2": end};
+	        }
 	    }
 
 	    mergeTwoSeqForAll(chainidArray, index, alignedChainIndice, resid2range_t, start_t, end_t, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -133955,9 +133928,6 @@ bool bvhIntersectFogVolumeHit(
 	        if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
 
 	        let result;
-
-	        let nGapInTemplate = 0; // number of gaps inserted into the template sequence
-	        let startPosInTemplate = 0; // position in the template sequence to start the mapping
 	        
 	        // need to improve when tmalign with residue number with postfix such as 52A in 4ORZ_C,5ESV_H
 	        // start and end should be positions, not original residue numbers.
@@ -133965,11 +133935,10 @@ bool bvhIntersectFogVolumeHit(
 	            start_t = ic.ParserUtilsCls.getResi(chainid1, start_t);
 	            end_t = ic.ParserUtilsCls.getResi(chainid1, end_t);
 	        }
-	console.log("### me.cfg.aligntool " + me.cfg.aligntool + " bRealign " + bRealign );
+
 	        for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
 	            let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
-	          
-	            if(bRealign && (me.cfg.aligntool == 'tmalign')) { // real residue numbers are stored
+	            if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
 	                start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
 	                start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
 	                end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
@@ -133997,28 +133966,46 @@ bool bvhIntersectFogVolumeHit(
 	                end1Pos = end1;
 	            }
 	            //let range = resid2range_t[chainid1 + '_' + resiStart1];
-
+	  
 	            // if the mapping does not start from start_t, add gaps to the query seq
 	            if(i == 0) {
-	                startPosInTemplate = start1Pos;
 
-	                //!!!
-	                // result = this.getTemplatePosFromOriPos(chainid1, start_t, start1, bRealign);
-	                result = this.getTemplatePosFromOriPos(chainid1, start_t, start1Pos, bRealign);
-	                pos1 = result.pos1;
-	                pos2 = result.pos2;
+	                if(me.cfg.aligntool == 'seqalign') {
+	                    result = this.getTemplatePosFromOriPos(chainid1, start_t, start1Pos, bRealign);
 
-	                //!!!
-	                // if(start1 > start_t) {
-	                if(start1Pos > start_t) {
-	                    for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
-	                        ic.alnChainsSeq[chainid2].push(gapResObject2);
+	                    pos1 = result.pos1;
+	                    pos2 = result.pos2;
+	                    
+	                    //if(start1 > start_t) {
+	                    if(start1Pos > start_t) {
+	                        for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
+	                            ic.alnChainsSeq[chainid2].push(gapResObject2);
+	                        }
+	                    }
+	                }
+	                else {
+	                    result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
+
+	                    pos1 = result.pos1;
+	                    pos2 = result.pos2;
+	                    
+	                    if(start1 > start_t) {
+	                    //if(start1Pos > start_t) {
+	                        for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
+	                            ic.alnChainsSeq[chainid2].push(gapResObject2);
+	                        }
 	                    }
 	                }
 	            }
 	            else {
 	                //let notAlnLen1 = start1 - (prevIndex1 + 1);
-	                result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, start1, bRealign);
+	                //!!!
+	                if(me.cfg.aligntool == 'seqalign') {
+	                    result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, start1Pos, bRealign);
+	                }
+	                else {
+	                    result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, start1, bRealign);
+	                }
 	                pos1 = result.pos1;
 	                pos2 = result.pos2;
 	                let notAlnLen1 = pos2 - (pos1 + 1);
@@ -134029,47 +134016,48 @@ bool bvhIntersectFogVolumeHit(
 
 	                // insert non-aligned residues in query seq
 	                this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
+
 	                if(notAlnLen1 >= notAlnLen2) {
 	                    // add gaps before the query sequence
 	                    for(let j = 0, jl = notAlnLen1 - notAlnLen2; j < jl; ++j) {
 	                        ic.alnChainsSeq[chainid2].push(gapResObject2);
-	                    }
+	                    }                       
 	                }
 	                else {
 	                    // check the number of gaps before resiStart1 (n), and insert 'notAlnLen2 - notAlnLen1 - n' gaps
 	                    this.addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resiStart1, notAlnLen2 - notAlnLen1);
-	                    nGapInTemplate += (notAlnLen2 - notAlnLen1);
 	                }                           
 	            }
 
 	            // 2. In the mapped residues
-	            // result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
-	            result = this.getTemplatePosFromOriPos(chainid1, start1Pos, end1Pos, bRealign);
+	            if(me.cfg.aligntool == 'seqalign') {
+	                result = this.getTemplatePosFromOriPos(chainid1, start1Pos, end1Pos, bRealign);
+	            }
+	            else {
+	                result = this.getTemplatePosFromOriResi(chainid1, start1, end1, bRealign);
+	            }
 	            pos1 = result.pos1;
 	            pos2 = result.pos2;
-
+	            
 	            let k = 0;    
 	            if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
 	            if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
-	            //!!!!!!
-	            let resiAdjust = ((bRealign && me.cfg.aligntool == 'tmalign') || me.cfg.aligntool == 'seqalign') ? 0 : - startPosInTemplate + nGapInTemplate; 
 	            for(let j = pos1; j <= pos2; ++j) {
 	                // inherit the gaps from the template
-	                if(ic.alnChainsSeq[chainid1][j + resiAdjust].resn == '-') {
+	                if(ic.alnChainsSeq[chainid1][j].resn == '-') {
 	                    ic.alnChainsSeq[chainid2].push(gapResObject2);
 	                }
 	                else {                   
 	                    let resi1 = (bRealign && me.cfg.aligntool == 'tmalign') ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
 	                    let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
-
 	                    let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
 	                    let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
-
+	                    
 	                    let bAlign = true;
 	                    let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1);
 	                    ic.alnChainsSeq[chainid2].push(resObject);
 	                    // update color in the template
-	                    ic.alnChainsSeq[chainid1][j + resiAdjust].color = resObject.color;
+	                    ic.alnChainsSeq[chainid1][j].color = resObject.color;
 
 	                    ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
 	                    ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;  
@@ -134087,7 +134075,12 @@ bool bvhIntersectFogVolumeHit(
 	        } 
 
 	        // add gaps at the end
-	        result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
+	        if(me.cfg.aligntool == 'seqalign') {
+	            result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
+	        }
+	        else {
+	            result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, end_t, bRealign);
+	        }
 	        pos1 = result.pos1;
 	        pos2 = result.pos2;
 	        for(let i = pos1; i < pos2; ++i) {
@@ -134107,7 +134100,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        for(let i = 0, il = ic.qt_start_end[index].length; i < il; ++i) {
 	            let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
-
+	            
 	            start1 = ic.qt_start_end[index][i].t_start;
 	            start2 = ic.qt_start_end[index][i].q_start;
 	            end1 = ic.qt_start_end[index][i].t_end;
@@ -134423,10 +134416,10 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	    }   
 
-	    setMsaFormat(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+	    setMsaFormat(chainidArray) { let ic = this.icn3d; ic.icn3dui;
 	        //set MSA
-	        let fastaFormat = '', clustalwFormat = 'CLUSTALWW\n\n', resbyresFormat = '';
-	        let chainArrayClustal = [];
+	        let fastaFormat = '', clustalwFormat = 'CLUSTALW\n\n', resbyresFormat = '';
+	        let chainArrayClustalw = [];
 	        
 	        let consArray = [], resiArrayTemplate = [];
 	        let chainidTemplate = chainidArray[0];
@@ -134435,9 +134428,7 @@ bool bvhIntersectFogVolumeHit(
 	            fastaFormat += '>' + chainid + '\n';
 
 	            let clustalwArray = [];
-	            let itemArray = me.utilsCls.getIdArray(chainid);
-	            let chainidStr = 'pdb|' + itemArray[0] + '|' + itemArray[1];
-	            let clustalwLine = chainidStr.padEnd(20, ' ');
+	            let clustalwLine = chainid.padEnd(20, ' ');
 	            let consLine = ''.padEnd(20, ' ');
 
 	            let resiArrayTarget = [], resiArrayQuery = [];
@@ -134497,8 +134488,8 @@ bool bvhIntersectFogVolumeHit(
 
 	            fastaFormat += '\n';
 
-	            chainArrayClustal.push(clustalwArray);
-	            if(i == il - 1) chainArrayClustal.push(consArray);
+	            chainArrayClustalw.push(clustalwArray);
+	            if(i == il - 1) chainArrayClustalw.push(consArray);
 
 	            // residue by residue
 	            let resiRangeStr1 = ic.resid2specCls.resi2range(resiArrayTarget, true);
@@ -134507,10 +134498,10 @@ bool bvhIntersectFogVolumeHit(
 	            if(i > 0) resbyresFormat += resiRangeStr1 + ' | ' + resiRangeStr2 + '\n';
 	        }
 
-	        // CLUSTALWW
-	        for(let j = 0, jl = chainArrayClustal[0].length; j < jl; ++j) {
-	            for(let i = 0, il = chainArrayClustal.length; i < il; ++i) {
-	                clustalwFormat += chainArrayClustal[i][j] + '\n';
+	        // CLUSTALW
+	        for(let j = 0, jl = chainArrayClustalw[0].length; j < jl; ++j) {
+	            for(let i = 0, il = chainArrayClustalw.length; i < il; ++i) {
+	                clustalwFormat += chainArrayClustalw[i][j] + '\n';
 	            }
 	            clustalwFormat += '\n';
 	        }
@@ -142634,6 +142625,15 @@ bool bvhIntersectFogVolumeHit(
 	         return Object.keys(residueHash);
 	    }
 
+	    atoms2chains(atoms) {var ic = this.icn3d; ic.icn3dui;
+	         let chains = {};
+	         for(let i in atoms) {
+	             let atom = ic.atoms[i];
+	             chains[atom.structure + '_' + atom.chain] = 1;
+	         }
+	         return chains;
+	    }
+
 	    atoms2structureArray(atoms) {var ic = this.icn3d; ic.icn3dui;
 	         let structures = {};
 	         for(let i in atoms) {
@@ -150249,11 +150249,10 @@ bool bvhIntersectFogVolumeHit(
 	                //me.htmlCls.HEIGHT = $( window ).height();
 	                me.utilsCls.setViewerWidthHeight(ic.icn3dui);
 
-	                let width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
-	                let height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
+	                me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
+	                me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
 
-	                // if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
-	                if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height, true, true);
+	                //if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height, true, true);
 	            });
 	        }
 	    }
@@ -155003,8 +155002,8 @@ bool bvhIntersectFogVolumeHit(
 	  }
 	}
 	//When users first load a structure, call this function to empty previous settings.
-	iCn3D.prototype.init = function (bKeepCmd, bKeepConfig) {
-	    this.init_base(bKeepCmd, bKeepConfig);
+	iCn3D.prototype.init = function (bClearCmd, bKeepConfig) {
+	    this.init_base(bClearCmd, bKeepConfig);
 
 	    this.molTitle = "";
 
@@ -155024,7 +155023,7 @@ bool bvhIntersectFogVolumeHit(
 	    this.axes = [];
 	};
 
-	iCn3D.prototype.init_base = function (bKeepCmd, bKeepConfig) {
+	iCn3D.prototype.init_base = function (bClearCmd, bKeepConfig) {
 	    if(!bKeepConfig) this.resetConfig();
 	    
 	    this.structures = {}; // structure name -> array of chains
@@ -155119,7 +155118,7 @@ bool bvhIntersectFogVolumeHit(
 	    this.transformCls.rotateCount = 0;
 	    this.transformCls.rotateCountMax = 20;
 
-	    if(bKeepCmd) this.commands = [];
+	    if(bClearCmd) this.commands = [];
 
 	    this.axes = [];
 
@@ -155311,9 +155310,9 @@ bool bvhIntersectFogVolumeHit(
 	      resize: function( event, ui ) {
 	        me.htmlCls.WIDTH = ui.size.width; //$("#" + ic.pre + "canvas").width();
 	        me.htmlCls.HEIGHT = ui.size.height; //$("#" + ic.pre + "canvas").height();
-	        if(ic !== undefined && !me.icn3d.bFullscreen) {
-	            ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
-	        }
+	        // if(ic !== undefined && !me.icn3d.bFullscreen) {
+	        //     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
+	        // }
 	      }
 	    });
 

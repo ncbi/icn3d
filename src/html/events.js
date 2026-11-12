@@ -56,7 +56,20 @@ class Events {
         let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
 
         if(nameArray.length == 0) {
-            nameArray = $("#" + me.pre + "atomsCustom").val();
+            // nameArray = $("#" + me.pre + "atomsCustom").val();
+            
+            // choose the first chain for each structure
+            nameArray = [];
+            let structureHash = {};
+            let chains = ic.resid2specCls.atoms2chains(ic.hAtoms);
+
+            for(let chainid in chains) {
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+                    nameArray.push(chainid);
+                    structureHash[atom.structure] = 1;
+                }
+            }
         }
 
         if(nameArray.length > 0) {
@@ -76,20 +89,6 @@ class Events {
         }
 
         if(bMsa) {
-            // choose the first chain for each structure
-            if(nameArray.length == 0) {
-                nameArray = [];
-                let structureHash = {};
-                
-                for(let chainid in ic.chains) {
-                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
-                    if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
-                        nameArray.push(chainid);
-                        structureHash[atom.structure] = 1;
-                    }
-                }
-            }
-
             await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
         }
         else {

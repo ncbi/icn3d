@@ -215,6 +215,15 @@ class Resid2spec {
          return Object.keys(residueHash);
     }
 
+    atoms2chains(atoms) {var ic = this.icn3d, me = ic.icn3dui;
+         let chains = {};
+         for(let i in atoms) {
+             let atom = ic.atoms[i];
+             chains[atom.structure + '_' + atom.chain] = 1;
+         }
+         return chains;
+    }
+
     atoms2structureArray(atoms) {var ic = this.icn3d, me = ic.icn3dui;
          let structures = {};
          for(let i in atoms) {

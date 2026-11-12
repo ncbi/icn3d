@@ -617,6 +617,7 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
+            me.cfg.resdef = decodeURIComponent(me.cfg.resdef).trim();
             let tmpStr = me.cfg.resdef.replace(/; /gi, ': ')
             // predefinedResArray = decodeURIComponent(tmpStr).trim().replace(/\+/gi, ' ').split(': ');
             predefinedResArray = tmpStr.replace(/\+/gi, ' ').split(': ');

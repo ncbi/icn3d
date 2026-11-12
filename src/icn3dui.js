@@ -269,9 +269,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
       resize: function( event, ui ) {
         me.htmlCls.WIDTH = ui.size.width; //$("#" + ic.pre + "canvas").width();
         me.htmlCls.HEIGHT = ui.size.height; //$("#" + ic.pre + "canvas").height();
-        if(ic !== undefined && !me.icn3d.bFullscreen) {
-            ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
-        }
+        // if(ic !== undefined && !me.icn3d.bFullscreen) {
+        //     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
+        // }
       }
     });
 
