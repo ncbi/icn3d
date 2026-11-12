@@ -657,7 +657,7 @@ class SetMenu {
         //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
         html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        //html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
         //html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";

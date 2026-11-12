@@ -180,7 +180,6 @@ class Dialog {
                       if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                   }
                   else {
-                      //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                       ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
                   }
               }
@@ -269,7 +268,6 @@ class Dialog {
               let status = thisClass.getDialogStatus().status;
 
               if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bHbondplot2) &&(!status.bLigplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
-                    //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
               }
           },
@@ -314,8 +312,7 @@ class Dialog {
                 }
             }
             else {
-                //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) * 0.5, true);
-                ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH,(me.htmlCls.HEIGHT) * 0.5, true);
+                //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH,(me.htmlCls.HEIGHT) * 0.5, true);
 
                 //height =(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) * 0.5;
                 height =(me.htmlCls.HEIGHT) * 0.5;
@@ -355,7 +352,6 @@ class Dialog {
                               if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                           }
                           else {
-                              //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                               ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
                           }
                       }

@@ -375,8 +375,8 @@ class MmdbParser {
 
         if(type === undefined || type === 'target') {
             // if a command contains "load...", the commands should not be cleared with init()
-            let bKeepCmd = (ic.bCommandLoad) ? true : false;
-            if(!ic.bStatefile) ic.init(bKeepCmd);
+            let bClearCmd = (ic.bCommandLoad) ? false : true;
+            if(!ic.bStatefile) ic.init(bClearCmd);
 
             ic.chainsColor = {}
             ic.chainsGene = {}
