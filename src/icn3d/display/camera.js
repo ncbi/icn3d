@@ -148,6 +148,7 @@ class Camera {
                 // else {
                     ic.cam.near = 0.1;
                 // }
+                
                 ic.cam.far = 10000;
 
                 if(ic.bControlGl && !me.bNode) {

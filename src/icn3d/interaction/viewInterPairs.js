@@ -308,9 +308,9 @@ class ViewInterPairs {
             me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
            }
 
-           if(me.bNode) {
-            console.log(html);
-           }
+        //    if(me.bNode) {
+        //     console.log(html);
+        //    }
        }
        else if(type == 'view') {
            $("#" + ic.pre + "dl_allinteraction_html").html(html);

@@ -27,7 +27,7 @@ class Transform {
             }
             else { // |||pos:a,b,c|dir:a,b,c|up:a,b,c|fov:a
                 let bcfArray = commandTransformation[1].split('|');
-                // let dirVec;
+                let dirVec;
                 bcfArray.forEach(item => {
                     let itemArray = item.split(':');
                     if(itemArray[0] == 'fov') {
@@ -40,7 +40,7 @@ class Transform {
                         }
                         else if(itemArray[0] == 'dir') {
                             ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(abc[0], abc[1], abc[2]));
-                            // dirVec = new THREE.Vector3(abc[0], abc[1], abc[2]);
+                            dirVec = new THREE.Vector3(abc[0], abc[1], abc[2]);
                         }
                         else if(itemArray[0] == 'up') {
                             ic.cam.up.set(abc[0], abc[1], abc[2]);
@@ -48,10 +48,11 @@ class Transform {
                     }
                 });
                 // apply after pos and up are known, so the roll follows "up"
-                // if(dirVec) {
-                //     ic.cam.lookAt(ic.cam.position.clone().add(dirVec));
-                //     ic.cam.updateMatrixWorld(true);
-                // }
+                if(dirVec) {
+                    ic.cam.lookAt(ic.cam.position.clone().add(dirVec));
+                    ic.cam.updateProjectionMatrix();
+                    ic.cam.updateMatrixWorld(true);
+                }
 
                 // set the aspect ratio
                 if(!ic.container.whratio) {
@@ -290,16 +291,49 @@ class Transform {
 
        // center on the hAtoms if more than one residue is selected
        if(Object.keys(atoms).length > 1) {
-               let centerAtomsResults = ic.applyCenterCls.centerAtoms(atoms);
+            let centerAtomsResults = ic.applyCenterCls.centerAtoms(atoms);
 
-               ic.maxD = centerAtomsResults.maxD;
-               if (ic.maxD < 5) ic.maxD = 5;
+            ic.maxD = centerAtomsResults.maxD;
+            if (ic.maxD < 5) ic.maxD = 5;
 
-               ic.center = centerAtomsResults.center;
-               ic.applyCenterCls.setCenter(ic.center);
+            ic.center = centerAtomsResults.center;
+            ic.applyCenterCls.setCenter(ic.center);
 
-               // reset cameara
-               ic.cameraCls.setCamera();
+            // remember current view direction/up before setCamera() rebuilds controls
+            let cam = ic.cam;
+            let eyeDir = cam.position.clone();
+            if(eyeDir.lengthSq() < 1e-8) eyeDir.set(0, 0, 1);
+            eyeDir.normalize();
+            let up = cam.up.clone();
+
+            // reset cameara
+            ic.cameraCls.setCamera();
+
+            // pos: same direction, new distance (maxD * factor)
+            let dist = ic.maxD * ic.camMaxDFactor;
+            cam.position.copy(eyeDir.multiplyScalar(dist));
+            // up and dir: look at the new origin with the old roll
+            cam.up.copy(up);
+            cam.lookAt(0, 0, 0);
+            cam.updateProjectionMatrix();
+            cam.updateMatrixWorld(true);
+            
+            if(ic.bControlGl && !me.bNode) {
+                if(window.controls) window.controls.target.set(0, 0, 0);
+            }
+            else {
+                if(ic.controls) ic.controls.target.set(0, 0, 0);
+            }
+
+            // fov: unchanged by dolly zoom; set it here only if you want an fov-based zoom
+            // cam.fov = 20; cam.updateProjectionMatrix();
+
+            // make draw() -> resetOrientation_base() reuse the NEW values
+            if(!ic.bSetCamera && ic.commands.length > 0) {
+                let i = ic.commands.length - 1;
+                let cmd = ic.commands[i].split('|||')[0];
+                ic.commands[i] = cmd + '|||' + this.getTransformationStr({});
+            }               
        }
     }
 
