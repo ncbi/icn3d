@@ -35,7 +35,7 @@ class Fog {
                 else {
                     // adjust
                     let zoomFactor = (ic._zoomFactor > 1) ? ic._zoomFactor * 1.0 : ic._zoomFactor;
-                    let fogStrength = 2; // 1 = current, >1 = stronger
+                    let fogStrength = 1.5; // 1 = current, >1 = stronger
                     ic.scene.fog = new THREE.Fog(background, (3 - 0.5 / fogStrength) * ic.maxD * zoomFactor, (3 + 1.0 / fogStrength) * ic.maxD * zoomFactor);
                     ic.bSetFog = true;
                     ic.camMaxDFactorFog = 3;
