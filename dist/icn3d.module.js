@@ -148922,7 +148922,7 @@ class Cartoon2d {
             $("#" + me.svgid_ct).html(html);
         }
         else {
-/*            
+/*
             if(type == 'domain' && !ic.chainid2pssmid) {
                 //$.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
                     await thisClass.getNodesLinksForSetCartoon(type);
@@ -148939,7 +148939,7 @@ class Cartoon2d {
                 //});
             }
             else {
-*/               
+*/
                 //await this.getNodesLinksForSetCartoonBase(type);
                 await this.getNodesLinksForSetCartoon(type);
 
@@ -149233,48 +149233,48 @@ class Cartoon2d {
     }
 
     getCartoonData(type, node_link) { let ic = this.icn3d; ic.icn3dui;
-       // get the nodes and links data
-       let nodeArray = [], linkArray = [];
-       let nodeStr, linkStr;
+        // get the nodes and links data
+        let nodeArray = [], linkArray = [];
+        let nodeStr, linkStr;
 
-       nodeArray = node_link.node;
+        nodeArray = node_link.node;
 
-       // removed duplicated nodes
-       let nodeJsonArray = [];
-       let checkedNodeidHash = {};
-       let cnt = 0;
-       for(let i = 0, il = nodeArray.length; i < il; ++i) {
-           let node = nodeArray[i];
-           let nodeJson = JSON.parse(node);
-           if(!checkedNodeidHash.hasOwnProperty(nodeJson.id)) {
-               nodeJsonArray.push(nodeJson);
-               checkedNodeidHash[nodeJson.id] = cnt;
-               ++cnt;
-           }
-       }
-       let nodeStrArray = [];
-       for(let i = 0, il = nodeJsonArray.length; i < il; ++i) {
-           let nodeJson = nodeJsonArray[i];
-           nodeStrArray.push(JSON.stringify(nodeJson));
-       }
-       nodeStr = nodeStrArray.join(', ');
-       // linkStr
-       linkArray = node_link.link;
-       linkStr = linkArray.join(', ');
+        // removed duplicated nodes
+        let nodeJsonArray = [];
+        let checkedNodeidHash = {};
+        let cnt = 0;
+        for(let i = 0, il = nodeArray.length; i < il; ++i) {
+            let node = nodeArray[i];
+            let nodeJson = JSON.parse(node);
+            if(!checkedNodeidHash.hasOwnProperty(nodeJson.id)) {
+                nodeJsonArray.push(nodeJson);
+                checkedNodeidHash[nodeJson.id] = cnt;
+                ++cnt;
+            }
+        }
+        let nodeStrArray = [];
+        for(let i = 0, il = nodeJsonArray.length; i < il; ++i) {
+            let nodeJson = nodeJsonArray[i];
+            nodeStrArray.push(JSON.stringify(nodeJson));
+        }
+        nodeStr = nodeStrArray.join(', ');
+        // linkStr
+        linkArray = node_link.link;
+        linkStr = linkArray.join(', ');
 
-       ic.hAtoms;
-       let chemicalNodeStr = '';
-       let hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
-         disulfideLinkStr = '', crossLinkStr = '';
+        ic.hAtoms;
+        let chemicalNodeStr = '';
+        let hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
+            disulfideLinkStr = '', crossLinkStr = '';
 
 //       contactLinkStr += ic.getGraphCls.getContactLinksForSet(ic.hAtoms, 'chain', true);
 
-       let resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
-       resStr += linkStr + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+        let resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
+        resStr += linkStr + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
 
-       let level = (node_link.level) ? node_link.level : '';
-       resStr += '], "level": "' + level + '"}';
-       return resStr;
+        let level = (node_link.level) ? node_link.level : '';
+        resStr += '], "level": "' + level + '"}';
+        return resStr;
     }
 
     // async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -149301,111 +149301,123 @@ class Cartoon2d {
 
     //async getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
     async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
+        let thisClass = this;
 
-       let nodeArray = [], linkArray = [];
-       let cnt = 0;
-       let thickness = me.htmlCls.defaultValue; // 1
+        let nodeArray = [], linkArray = [];
+        let cnt = 0;
+        let thickness = me.htmlCls.defaultValue; // 1
 
-       let prevChain = '', prevResName = '', prevAtom, lastChain = '';
-       let x, y;
-       let bBegin = false, bEnd = true;
-       let resName, residLabel;
+        let prevChainid = '', prevResName = '', prevAtom, lastChain = '';
+        let x, y;
+        let bBegin = false, bEnd = true;
+        let resName, residLabel;
 
-       if(type == 'chain') {
-           let chainidHash = {};
-           for(let i in ic.hAtoms) {
-               let atom = ic.atoms[i];
-               if(atom.chain == 'DUM') continue;
+        if(type == 'chain') {
+            let chainidHash = {};
+            for(let i in ic.hAtoms) {
+                let atom = ic.atoms[i];
+                if(atom.chain == 'DUM') continue;
 
-               let chainid = atom.structure + '_' + atom.chain;
+                let chainid = atom.structure + '_' + atom.chain;
 
-               if(ic.proteins.hasOwnProperty(i) || ic.nucleotides.hasOwnProperty(i)) {
-                   if(!chainidHash.hasOwnProperty(chainid)) {
-                       chainidHash[chainid] = {};
-                   }
-                   chainidHash[chainid][atom.serial] = atom;
-               }
-           }
+                if(ic.proteins.hasOwnProperty(i) || ic.nucleotides.hasOwnProperty(i)) {
+                    if(!chainidHash.hasOwnProperty(chainid)) {
+                        chainidHash[chainid] = {};
+                    }
+                    chainidHash[chainid][atom.serial] = atom;
+                }
+            }
 
-           let min_max_center = ic.contactCls.getExtent(ic.atoms);
+            let min_max_center = ic.contactCls.getExtent(ic.atoms);
 
-           let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = -9999;
-           let itemArray = [];
-           for(let chainid in chainidHash) {
-               ic.hAtom = {};
-               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
+            let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = -9999;
+            let itemArray = [];
+            for(let chainid in chainidHash) {
+                ic.hAtom = {};
+                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
 
-               let center_x_y_z = ic.axesCls.setPc1Axes();
-               let center = center_x_y_z[0];
-               let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
-               let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
-               let angle = new Vector2$1(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
-               if(angle > 180) angle -= 180;
+                let center_x_y_z = ic.axesCls.setPc1Axes();
+                let center = center_x_y_z[0];
+                let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+                let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+                let angle = new Vector2$1(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
+                if(angle > 180) angle -= 180;
 
-               let serial = Object.keys(ic.hAtoms)[0];
-               let atom = ic.atoms[serial];
+                let serial = Object.keys(ic.hAtoms)[0];
+                let atom = ic.atoms[serial];
 
-               residLabel = chainid; //.substr(chainid.lastIndexOf('_') + 1); //chainid;
-               //let shapeid = 0;
+                residLabel = chainid; //.substr(chainid.lastIndexOf('_') + 1); //chainid;
+                //let shapeid = 0;
 
-               center = this.projectTo2d(center);
-               let x = center.x;
-               let y = center.y;
+                center = this.projectTo2d(center);
+                let x = center.x;
+                let y = center.y;
 
-               if(x < minX) minX = x;
-               if(x > maxX) maxX = x;
-               if(y < minY) minY = y;
-               if(y > maxY) maxY = y;
+                if(x < minX) minX = x;
+                if(x > maxX) maxX = x;
+                if(y < minY) minY = y;
+                if(y > maxY) maxY = y;
 
-               //let x = me.htmlCls.width2d * (center.x - min_max_center[0][0]) / (min_max_center[1][0] - min_max_center[0][0]);
-               //let y = me.htmlCls.width2d * (center.y - min_max_center[0][1]) / (min_max_center[1][1] - min_max_center[0][1]);
+                //let x = me.htmlCls.width2d * (center.x - min_max_center[0][0]) / (min_max_center[1][0] - min_max_center[0][0]);
+                //let y = me.htmlCls.width2d * (center.y - min_max_center[0][1]) / (min_max_center[1][1] - min_max_center[0][1]);
 
-               let factor = 0.5;
-               rx = factor * me.htmlCls.width2d * rx / (min_max_center[1][0] - min_max_center[0][0]);
-               ry = factor * me.htmlCls.width2d * ry / (min_max_center[1][1] - min_max_center[0][1]);
+                let factor = 0.5;
+                rx = factor * me.htmlCls.width2d * rx / (min_max_center[1][0] - min_max_center[0][0]);
+                ry = factor * me.htmlCls.width2d * ry / (min_max_center[1][1] - min_max_center[0][1]);
 
-               if(rx > maxR) maxR = rx;
-               if(ry > maxR) maxR = ry;
+                if(rx > maxR) maxR = rx;
+                if(ry > maxR) maxR = ry;
 
-               itemArray.push({"id":chainid, "r":residLabel, "x":x, "y":y, "rx":rx, "ry":ry,
-                 "ang":angle, "c":atom.color.getHexString()});
-           }
+                itemArray.push({"id":chainid, "r":residLabel, "x":x, "y":y, "rx":rx, "ry":ry,
+                    "ang":angle, "c":atom.color.getHexString()});
+            }
 
-           let offset = maxR + 2;
-           let rangeX = maxX - minX, rangeY = maxY - minY;
+            let offset = maxR + 2;
+            let rangeX = maxX - minX, rangeY = maxY - minY;
 
-           for(let i = 0, il = itemArray.length; i < il; ++i) {
-               let item = itemArray[i];
-               let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
-               let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
+            // 1. scale all chains into the 2D canvas
+            let scaledArray = [];
+            for(let i = 0, il = itemArray.length; i < il; ++i) {
+                let item = itemArray[i];
+                let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
+                let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
 
-               nodeArray.push('{"id": "' + item.id + '", "r": "' + item.r //+ '", "s": "' + setName
-                   + '", "x": ' + x.toFixed(0) + ', "y": ' + y.toFixed(0)
-                   + ', "rx": ' + item.rx.toFixed(0) + ', "ry": ' + item.ry.toFixed(0)
-                   + ', "ang": ' + item.ang.toFixed(0) //+ ', "shape": ' + shapeid
-                   + ', "c": "' + item.c.toUpperCase() + '"}');
-           }
+                scaledArray.push(Object.assign({}, item, {"x": x, "y": y}));
+            }
 
-           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+            // 2. push the overlapping chain ellipses apart (set ic.bCartoon2dOverlap = true to keep the raw projection)
+            if(!ic.bCartoon2dOverlap) this.removeOverlapEllipse2d(scaledArray, me.htmlCls.width2d);
 
-           ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
-       }
-       else if(type == 'domain') {
+            // 3. output the nodes
+            for(let i = 0, il = scaledArray.length; i < il; ++i) {
+                let item = scaledArray[i];
+
+                nodeArray.push('{"id": "' + item.id + '", "r": "' + item.r //+ '", "s": "' + setName
+                    + '", "x": ' + item.x.toFixed(0) + ', "y": ' + item.y.toFixed(0)
+                    + ', "rx": ' + item.rx.toFixed(0) + ', "ry": ' + item.ry.toFixed(0)
+                    + ', "ang": ' + item.ang.toFixed(0) //+ ', "shape": ' + shapeid
+                    + ', "c": "' + item.c.toUpperCase() + '"}');
+            }
+
+            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+            ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
+        }
+        else if(type == 'domain') {
 /*
-           if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
+            if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
                 //$.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
                     await ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations');
                     thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
                     /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
                     //return;
                 //});
-           }
-           else {
-               thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-               /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
-               //return;
-           }
+            }
+            else {
+                thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
+                /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+                //return;
+            }
 */
 
             if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
@@ -149413,262 +149425,483 @@ class Cartoon2d {
             }
 
             thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-       }
-       else if(type == 'secondary') {
-           ic.resi2resirange = {};
-           let resiArray = [], tmpResName;
+        }
+        else if(type == 'secondary') {
+            ic.resi2resirange = {};
+            let resiArray = [], tmpResName;
 
-           ic.contactCls.getExtent(ic.atoms);
+            ic.contactCls.getExtent(ic.atoms);
 
-           let ss = '';
+            let ss = '';
 
-           let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = 2;
-           let itemArray = [];
-           for(let i in ic.hAtoms) {
-               let atom = ic.atoms[i];
-               if(atom.chain == 'DUM') continue;
+            let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = 2;
+            let itemArray = [];
+            for(let i in ic.hAtoms) {
+                let atom = ic.atoms[i];
+                if(atom.chain == 'DUM') continue;
 
-               if((atom.ssbegin || atom.ssend) && atom.name == "CA" && atom.elem == "C") {
-                   let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                if((atom.ssbegin || atom.ssend) && atom.name == "CA" && atom.elem == "C") {
+                    let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-                   //if((prevChain === '' || prevChain == atom.chain) && bEnd && atom.ssbegin) {
-                   if(bEnd && atom.ssbegin) {
-                       bBegin = true;
-                       bEnd = false;
+                    if(bEnd && atom.ssbegin) {
+                        bBegin = true;
+                        bEnd = false;
 
-                       prevAtom = atom;
+                        prevAtom = atom;
 
-                       ss = (atom.ss == 'helix') ? 'H' : 'S';
+                        ss = (atom.ss == 'helix') ? 'H' : 'S';
 
-                       resName = ss + atom.resi;
-                       // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
-                       residLabel = '1_1_' + resid;
+                        resName = ss + atom.resi;
+                        // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
+                        residLabel = '1_1_' + resid;
 
-                       lastChain = atom.chain;
-                   }
+                        lastChain = atom.chain;
+                    }
 
-                   if(bBegin) {
-                       tmpResName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
-                       tmpResName += '__' + atom.chain;
-                       if(Object.keys(ic.structures).length > 1) tmpResName += '__' + atom.structure;
+                    if(bBegin) {
+                        tmpResName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                        tmpResName += '__' + atom.chain;
+                        if(Object.keys(ic.structures).length > 1) tmpResName += '__' + atom.structure;
 
-                       resiArray.push(tmpResName);
-                   }
+                        resiArray.push(tmpResName);
+                    }
 
-                   if(lastChain == atom.chain && bBegin && atom.ssend) {
-                       let v2a = this.projectTo2d(prevAtom.coord.clone());
-                       let x1 = v2a.x;
-                       let y1 = v2a.y;
+                    if(lastChain == atom.chain && bBegin && atom.ssend) {
+                        let v2a = this.projectTo2d(prevAtom.coord.clone());
+                        let x1 = v2a.x;
+                        let y1 = v2a.y;
 
-                       let v2b = this.projectTo2d(atom.coord.clone());
-                       let x2 = v2b.x;
-                       let y2 = v2b.y;
+                        let v2b = this.projectTo2d(atom.coord.clone());
+                        let x2 = v2b.x;
+                        let y2 = v2b.y;
 
-                       x = 0.5 * (x1 + x2);
-                       y = 0.5 * (y1 + y2);
+                        x = 0.5 * (x1 + x2);
+                        y = 0.5 * (y1 + y2);
 
-                       // use half length of the helix or sheet to make the display clear
-                       x1 = 0.5 * (x + x1);
-                       y1 = 0.5 * (y + y1);
-                       x2 = 0.5 * (x + x2);
-                       y2 = 0.5 * (y + y2);
+                        // use half length of the helix or sheet to make the display clear
+                        x1 = 0.5 * (x + x1);
+                        y1 = 0.5 * (y + y1);
+                        x2 = 0.5 * (x + x2);
+                        y2 = 0.5 * (y + y2);
 
-                       if(x1 < minX) minX = x1;
-                       if(x1 > maxX) maxX = x1;
-                       if(y1 < minY) minY = y1;
-                       if(y1 > maxY) maxY = y1;
+                        if(x1 < minX) minX = x1;
+                        if(x1 > maxX) maxX = x1;
+                        if(y1 < minY) minY = y1;
+                        if(y1 > maxY) maxY = y1;
 
-                       if(x2 < minX) minX = x2;
-                       if(x2 > maxX) maxX = x2;
-                       if(y2 < minY) minY = y2;
-                       if(y2 > maxY) maxY = y2;
+                        if(x2 < minX) minX = x2;
+                        if(x2 > maxX) maxX = x2;
+                        if(y2 < minY) minY = y2;
+                        if(y2 > maxY) maxY = y2;
 
-                       bBegin = false;
-                       bEnd = true;
+                        bBegin = false;
+                        bEnd = true;
 
-                       resName += '-' + atom.resi;
-                       residLabel += '-' + atom.resi;
+                        resName += '-' + atom.resi;
+                        residLabel += '-' + atom.resi;
 
-                       resName += '__' + atom.chain;
-                       if(Object.keys(ic.structures).length > 1) resName += '__' + atom.structure;
+                        resName += '__' + atom.chain;
+                        if(Object.keys(ic.structures).length > 1) resName += '__' + atom.structure;
 
-                       for(let j = 0, jl = resiArray.length; j < jl; ++j) {
-                           tmpResName = resiArray[j];
-                           ic.resi2resirange[tmpResName] = resName;
-                       }
-                       resiArray = [];
+                        for(let j = 0, jl = resiArray.length; j < jl; ++j) {
+                            tmpResName = resiArray[j];
+                            ic.resi2resirange[tmpResName] = resName;
+                        }
+                        resiArray = [];
 
-                       if(cnt > 0 && prevChain == atom.chain) {
-                           linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
-                               + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
-                       }
+                        if(cnt > 0 && prevChainid == atom.structure + '_' + atom.chain) {
+                            linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
+                                + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
+                        }
 
-                       itemArray.push({"id":resName, "r":residLabel, "ss":ss, "x":x, "y":y,
-                         "x1":x1, "y1":y1, "x2":x2, "y2":y2, "c":atom.color.getHexString()});
+                        itemArray.push({"id":resName, "r":residLabel, "ss":ss, "x":x, "y":y,
+                            "x1":x1, "y1":y1, "x2":x2, "y2":y2, "c":atom.color.getHexString()});
 
-                       prevChain = atom.chain;
-                       prevResName = resName;
-                       ++cnt;
-                   }
-               }
-           } //end for
+                        prevChainid = atom.structure + '_' + atom.chain;
+                        prevResName = resName;
+                        ++cnt;
+                    }
+                }
+            } //end for
 
-           let offset = maxR + 2;
-           let rangeX = maxX - minX, rangeY = maxY - minY;
+            let offset = maxR + 2;
+            let rangeX = maxX - minX, rangeY = maxY - minY;
 
-           for(let i = 0, il = itemArray.length; i < il; ++i) {
-               let item = itemArray[i];
-               let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
-               let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
-               let x1 = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x1 - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
-               let y1 = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y1 - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
-               let x2 = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x2 - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
-               let y2 = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y2 - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
+            // 1. scale all helices/sheets into the 2D canvas
+            let scaledArray = [];
+            for(let i = 0, il = itemArray.length; i < il; ++i) {
+                let item = itemArray[i];
+                let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
+                let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
+                let x1 = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x1 - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
+                let y1 = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y1 - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
+                let x2 = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x2 - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
+                let y2 = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y2 - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
 
-               nodeArray.push('{"id": "' + item.id + '", "r": "' + item.r
-                   + '", "x": ' + x.toFixed(0) + ', "y": ' + y.toFixed(0)
-                   + ', "x1": ' + x1.toFixed(0) + ', "y1": ' + y1.toFixed(0)
-                   + ', "x2": ' + x2.toFixed(0) + ', "y2": ' + y2.toFixed(0)
-                   + ', "c": "' + item.c.toUpperCase() + '"}');
-           }
+                scaledArray.push({"id":item.id, "r":item.r, "c":item.c, "x":x, "y":y, "x1":x1, "y1":y1, "x2":x2, "y2":y2});
+            }
 
-           ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
-       }
+            // 2. the 3D -> 2D projection makes many helices/sheets overlap. Push them apart (set ic.bCartoon2dOverlap = true to keep the raw projection)
+            if(!ic.bCartoon2dOverlap) this.removeOverlap2d(scaledArray, me.htmlCls.width2d);
 
-       /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+            // 3. output the nodes
+            for(let i = 0, il = scaledArray.length; i < il; ++i) {
+                let item = scaledArray[i];
+
+                nodeArray.push('{"id": "' + item.id + '", "r": "' + item.r
+                    + '", "x": ' + item.x.toFixed(0) + ', "y": ' + item.y.toFixed(0)
+                    + ', "x1": ' + item.x1.toFixed(0) + ', "y1": ' + item.y1.toFixed(0)
+                    + ', "x2": ' + item.x2.toFixed(0) + ', "y2": ' + item.y2.toFixed(0)
+                    + ', "c": "' + item.c.toUpperCase() + '"}');
+            }
+
+            ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
+        }
+
+        /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+    }
+
+    /**
+     * Move the helix/sheet segments of the 2D cartoon (secondary level) apart so that they do not overlap.
+     * items: array of {x, y, x1, y1, x2, y2, ...} in 2D canvas coordinates, modified in place.
+     * opts.minDist: minimum distance between the center lines of two segments (default 7, i.e. room for the 3px stroke and the 8px label)
+     */
+    removeOverlap2d(items, width, opts) {
+        opts = opts || {};
+        let minDist = opts.minDist !== undefined ? opts.minDist : 7;   // min gap between segment centerlines (px in 200x200 viewBox)
+        let margin = opts.margin !== undefined ? opts.margin : 4;
+        let maxIter = opts.maxIter || (items.length > 500 ? 60 : 300);
+        let minLen = opts.minLen || 8;
+        let n = items.length;
+        if(n < 2) return items;
+
+        function closest(a, b) { // closest points between segments a and b
+            let d1x = a.x2 - a.x1, d1y = a.y2 - a.y1, d2x = b.x2 - b.x1, d2y = b.y2 - b.y1;
+            let rx = a.x1 - b.x1, ry = a.y1 - b.y1;
+            let A = d1x*d1x + d1y*d1y, E = d2x*d2x + d2y*d2y, F = d2x*rx + d2y*ry;
+            let s, t, eps = 1e-9;
+            if(A <= eps && E <= eps) { s = 0; t = 0; }
+            else if(A <= eps) { s = 0; t = Math.min(1, Math.max(0, F / E)); }
+            else {
+                let C = d1x*rx + d1y*ry;
+                if(E <= eps) { t = 0; s = Math.min(1, Math.max(0, -C / A)); }
+                else {
+                    let B = d1x*d2x + d1y*d2y, den = A*E - B*B;
+                    s = (den > eps) ? Math.min(1, Math.max(0, (B*F - C*E) / den)) : 0;
+                    t = (B*s + F) / E;
+                    if(t < 0) { t = 0; s = Math.min(1, Math.max(0, -C / A)); }
+                    else if(t > 1) { t = 1; s = Math.min(1, Math.max(0, (B - C) / A)); }
+                }
+            }
+            return {px: a.x1 + d1x*s, py: a.y1 + d1y*s, qx: b.x1 + d2x*t, qy: b.y1 + d2y*t};
+        }
+        function shift(it, dx, dy) { it.x1 += dx; it.x2 += dx; it.y1 += dy; it.y2 += dy; }
+        function clamp(it) {
+            let lo = margin, hi = width - margin, dx = 0, dy = 0;
+            let minx = Math.min(it.x1, it.x2), maxx = Math.max(it.x1, it.x2);
+            let miny = Math.min(it.y1, it.y2), maxy = Math.max(it.y1, it.y2);
+            if(minx < lo) dx = lo - minx; else if(maxx > hi) dx = hi - maxx;
+            if(miny < lo) dy = lo - miny; else if(maxy > hi) dy = hi - maxy;
+            if(dx || dy) shift(it, dx, dy);
+        }
+
+        for(let iter = 0; iter < maxIter; ++iter) {
+            let moved = false;
+            for(let i = 0; i < n - 1; ++i) {
+                let a = items[i];
+                for(let j = i + 1; j < n; ++j) {
+                    let b = items[j];
+                    // cheap bounding box rejection
+                    if(Math.min(a.x1,a.x2) - minDist > Math.max(b.x1,b.x2) || Math.min(b.x1,b.x2) - minDist > Math.max(a.x1,a.x2) ||
+                        Math.min(a.y1,a.y2) - minDist > Math.max(b.y1,b.y2) || Math.min(b.y1,b.y2) - minDist > Math.max(a.y1,a.y2)) continue;
+                    let c = closest(a, b);
+                    let vx = c.qx - c.px, vy = c.qy - c.py;
+                    let d = Math.sqrt(vx*vx + vy*vy);
+                    if(d >= minDist) continue;
+
+                    // Separating-axis test: candidate axes are the normals of both segments and the
+                    // closest-point direction. Choose the axis that needs the smallest shift, so that even
+                    // crossing segments are separated efficiently.
+                    let axes = [];
+                    let la = Math.hypot(a.x2 - a.x1, a.y2 - a.y1), lb = Math.hypot(b.x2 - b.x1, b.y2 - b.y1);
+                    if(la > 1e-6) axes.push([-(a.y2 - a.y1) / la, (a.x2 - a.x1) / la]);
+                    if(lb > 1e-6) axes.push([-(b.y2 - b.y1) / lb, (b.x2 - b.x1) / lb]);
+                    if(d > 1e-6) axes.push([vx / d, vy / d]);
+                    let mx = 0.5*(b.x1 + b.x2) - 0.5*(a.x1 + a.x2), my = 0.5*(b.y1 + b.y2) - 0.5*(a.y1 + a.y2);
+                    let ml = Math.hypot(mx, my);
+                    if(ml > 1e-6) axes.push([mx / ml, my / ml]);
+                    if(axes.length == 0) axes.push([Math.cos(i*2.399 + j), Math.sin(i*2.399 + j)]);
+
+                    let bestPush = 1e9, ux = 0, uy = 0;
+                    for(let k = 0; k < axes.length; ++k) {
+                        let ax = axes[k][0], ay = axes[k][1];
+                        let a1 = a.x1*ax + a.y1*ay, a2 = a.x2*ax + a.y2*ay;
+                        let b1 = b.x1*ax + b.y1*ay, b2 = b.x2*ax + b.y2*ay;
+                        let amin = Math.min(a1, a2), amax = Math.max(a1, a2), bmin = Math.min(b1, b2), bmax = Math.max(b1, b2);
+                        // b on the positive side of a, or the negative side?
+                        let sign = ((bmin + bmax) >= (amin + amax)) ? 1 : -1;
+                        let gap = (sign > 0) ? (bmin - amax) : (amin - bmax);
+                        let need = minDist - gap;
+                        if(need < bestPush) { bestPush = need; ux = ax * sign; uy = ay * sign; }
+                    }
+                    let push = 0.5 * bestPush + 0.05;
+                    shift(a, -ux * push, -uy * push);
+                    shift(b,  ux * push,  uy * push);
+                    moved = true;
+                }
+            }
+            for(let i = 0; i < n; ++i) clamp(items[i]);
+            if(!moved) break;
+            // still crowded halfway through: shorten the segments about their centers (down to minLen)
+            if(iter > 0 && iter % 60 == 0) {
+                for(let i = 0; i < n; ++i) {
+                    let it = items[i], cx = 0.5*(it.x1+it.x2), cy = 0.5*(it.y1+it.y2);
+                    let len = Math.hypot(it.x2-it.x1, it.y2-it.y1);
+                    if(len > minLen) {
+                        let f = Math.max(0.85, minLen / len);
+                        it.x1 = cx + (it.x1-cx)*f; it.x2 = cx + (it.x2-cx)*f;
+                        it.y1 = cy + (it.y1-cy)*f; it.y2 = cy + (it.y2-cy)*f;
+                    }
+                }
+            }
+        }
+        for(let i = 0; i < n; ++i) { let it = items[i]; it.x = 0.5*(it.x1+it.x2); it.y = 0.5*(it.y1+it.y2); }
+        return items;
+    }
+
+    /**
+     * Move the ellipses of the 2D cartoon (chain and domain levels) apart so that they do not overlap.
+     * items: array of {x, y, rx, ry, ang (degrees), ...} in 2D canvas coordinates (y pointing up, as in the node data), modified in place.
+     * opts.minGap: minimum gap between two ellipses (default 2)
+     * opts.minScale: ellipses may be shrunk if the canvas is too crowded, but not below this fraction of their size (default 0.5)
+     */
+    removeOverlapEllipse2d(items, width, opts) {
+        opts = opts || {};
+        let minGap = opts.minGap !== undefined ? opts.minGap : 2;
+        let margin = opts.margin !== undefined ? opts.margin : 2;
+        let minScale = opts.minScale || 0.5;
+        let maxIter = opts.maxIter || (items.length > 300 ? 60 : 300);
+        let n = items.length;
+        if(n < 2) return items;
+
+        let rad = Math.PI / 180;
+        let cosA = [], sinA = [], rx0 = [], ry0 = [];
+        for(let i = 0; i < n; ++i) {
+            cosA.push(Math.cos(items[i].ang * rad));
+            sinA.push(Math.sin(items[i].ang * rad));
+            rx0.push(items[i].rx);
+            ry0.push(items[i].ry);
+        }
+        // a few fixed extra axes (every 15 degrees)
+        let fixedAxes = [];
+        for(let k = 0; k < 12; ++k) fixedAxes.push([Math.cos(k * 15 * rad), Math.sin(k * 15 * rad)]);
+
+        // half-width of ellipse i along unit axis (ux, uy): its support function
+        function half(i, ux, uy) {
+            let it = items[i];
+            let p = ux * cosA[i] + uy * sinA[i];    // component along the rx axis
+            let q = -ux * sinA[i] + uy * cosA[i];   // component along the ry axis
+            return Math.sqrt(it.rx * it.rx * p * p + it.ry * it.ry * q * q);
+        }
+        function clamp(i) {
+            let it = items[i];
+            let hw = Math.sqrt(it.rx*it.rx*cosA[i]*cosA[i] + it.ry*it.ry*sinA[i]*sinA[i]);
+            let hh = Math.sqrt(it.rx*it.rx*sinA[i]*sinA[i] + it.ry*it.ry*cosA[i]*cosA[i]);
+            let lox = margin + hw, hix = width - margin - hw, loy = margin + hh, hiy = width - margin - hh;
+            it.x = (lox > hix) ? 0.5 * width : Math.min(hix, Math.max(lox, it.x));
+            it.y = (loy > hiy) ? 0.5 * width : Math.min(hiy, Math.max(loy, it.y));
+        }
+
+        for(let iter = 0; iter < maxIter; ++iter) {
+            let moved = false;
+            for(let i = 0; i < n - 1; ++i) {
+                let a = items[i];
+                let ra = Math.max(a.rx, a.ry);
+                for(let j = i + 1; j < n; ++j) {
+                    let b = items[j];
+                    let cx = b.x - a.x, cy = b.y - a.y;
+                    let dist = Math.sqrt(cx * cx + cy * cy);
+                    if(dist >= ra + Math.max(b.rx, b.ry) + minGap) continue; // bounding circles are apart
+
+                    // separating-axis test: axes = center direction, the principal axes of both ellipses, fixed axes
+                    let axes = [];
+                    if(dist > 1e-6) axes.push([cx / dist, cy / dist]);
+                    else axes.push([Math.cos(i * 2.399 + j), Math.sin(i * 2.399 + j)]); // identical centers: deterministic jitter
+                    axes.push([cosA[i], sinA[i]], [-sinA[i], cosA[i]], [cosA[j], sinA[j]], [-sinA[j], cosA[j]]);
+                    for(let k = 0; k < fixedAxes.length; ++k) axes.push(fixedAxes[k]);
+
+                    let bestNeed = 1e9, ux = 0, uy = 0;
+                    for(let k = 0; k < axes.length; ++k) {
+                        let ax = axes[k][0], ay = axes[k][1];
+                        let p = cx * ax + cy * ay;
+                        let sign = (p >= 0) ? 1 : -1;
+                        let gap = Math.abs(p) - half(i, ax, ay) - half(j, ax, ay);
+                        let need = minGap - gap;
+                        if(need < bestNeed) { bestNeed = need; ux = ax * sign; uy = ay * sign; }
+                    }
+                    if(bestNeed <= 0) continue; // some axis separates them
+
+                    let push = 0.5 * bestNeed + 0.05;
+                    a.x -= ux * push; a.y -= uy * push;
+                    b.x += ux * push; b.y += uy * push;
+                    moved = true;
+                }
+            }
+            for(let i = 0; i < n; ++i) clamp(i);
+            if(!moved) break;
+            if(iter > 0 && iter % 60 == 0) { // still crowded: shrink a bit, but never below minScale of the original size
+                for(let i = 0; i < n; ++i) {
+                    items[i].rx = Math.max(items[i].rx * 0.9, Math.min(rx0[i], Math.max(minScale * rx0[i], 3)));
+                    items[i].ry = Math.max(items[i].ry * 0.9, Math.min(ry0[i], Math.max(minScale * ry0[i], 3)));
+                }
+            }
+        }
+        return items;
     }
 
     getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
-       let nodeArray = [], linkArray = [];
-       let thickness = me.htmlCls.defaultValue; // 1
+        let nodeArray = [], linkArray = [];
+        let thickness = me.htmlCls.defaultValue; // 1
 
-       ic.resi2resirange = {};
+        ic.resi2resirange = {};
 
-       // find the chainids
-       let chainidHash = {};
-       for(let i in ic.hAtoms) {
-           let atom = ic.atoms[i];
-           if(atom.chain == 'DUM') continue;
+        // find the chainids
+        let chainidHash = {};
+        for(let i in ic.hAtoms) {
+            let atom = ic.atoms[i];
+            if(atom.chain == 'DUM') continue;
 
-           chainidHash[atom.structure + '_' + atom.chain] = 1;
-       }
+            chainidHash[atom.structure + '_' + atom.chain] = 1;
+        }
 
-       let min_max_center = ic.contactCls.getExtent(ic.atoms);
+        let min_max_center = ic.contactCls.getExtent(ic.atoms);
 
-       let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = -9999;
-       let itemArray = [];
+        let minX=9999, minY=9999, maxX=-9999, maxY=-9999, maxR = -9999;
+        let itemArray = [];
 
-       // show domains for each chain
-       for(let chainid in chainidHash) {
-           if(!chainid2pssmid.hasOwnProperty(chainid)) continue;
+        // show domains for each chain
+        for(let chainid in chainidHash) {
+            if(!chainid2pssmid.hasOwnProperty(chainid)) continue;
 
-           let pssmid2name = chainid2pssmid[chainid].pssmid2name;
-           let pssmid2fromArray = chainid2pssmid[chainid].pssmid2fromArray;
-           let pssmid2toArray = chainid2pssmid[chainid].pssmid2toArray;
+            let pssmid2name = chainid2pssmid[chainid].pssmid2name;
+            let pssmid2fromArray = chainid2pssmid[chainid].pssmid2fromArray;
+            let pssmid2toArray = chainid2pssmid[chainid].pssmid2toArray;
 
-           // sort the domains according to the starting residue number
-           let pssmid2start = {};
-           for(let pssmid in pssmid2name) {
-               let fromArray = pssmid2fromArray[pssmid];
-               pssmid2start[pssmid] = fromArray[0];
-           }
+            // sort the domains according to the starting residue number
+            let pssmid2start = {};
+            for(let pssmid in pssmid2name) {
+                let fromArray = pssmid2fromArray[pssmid];
+                pssmid2start[pssmid] = fromArray[0];
+            }
 
-           var pssmidArray = Object.keys(pssmid2start);
-           pssmidArray.sort(function(a, b) {
-               return pssmid2start[a] - pssmid2start[b]
-           });
-           let prevDomainName, prevAtom;
-           //for(let pssmid in pssmid2name) {
-           for(let i = 0, il = pssmidArray.length; i < il; ++i) {
-               let pssmid = pssmidArray[i];
+            var pssmidArray = Object.keys(pssmid2start);
+            pssmidArray.sort(function(a, b) {
+                return pssmid2start[a] - pssmid2start[b]
+            });
+            let prevDomainName, prevAtom;
+            //for(let pssmid in pssmid2name) {
+            for(let i = 0, il = pssmidArray.length; i < il; ++i) {
+                let pssmid = pssmidArray[i];
 
-               let domainName = pssmid2name[pssmid];
-               domainName += '__' + chainid.substr(chainid.indexOf('_') + 1);
-               if(Object.keys(ic.structures).length > 1) domainName += '__' + chainid.substr(0, chainid.indexOf('_'));
+                let domainName = pssmid2name[pssmid];
+                domainName += '__' + chainid.substr(chainid.indexOf('_') + 1);
+                if(Object.keys(ic.structures).length > 1) domainName += '__' + chainid.substr(0, chainid.indexOf('_'));
 
-               let fromArray = pssmid2fromArray[pssmid];
-               let toArray = pssmid2toArray[pssmid];
+                let fromArray = pssmid2fromArray[pssmid];
+                let toArray = pssmid2toArray[pssmid];
 
-               ic.hAtoms = {};
-               for(let j = 0, jl = fromArray.length; j < jl; ++j) {
-                   let resiStart = parseInt(fromArray[j]) + 1;
-                   let resiEnd = parseInt(toArray[j]) + 1;
+                ic.hAtoms = {};
+                for(let j = 0, jl = fromArray.length; j < jl; ++j) {
+                    let resiStart = parseInt(fromArray[j]) + 1;
+                    let resiEnd = parseInt(toArray[j]) + 1;
 
-                   for(let k = resiStart; k <= resiEnd; ++k) {
-                       ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[chainid + '_' + k]);
-                   }
-               }
+                    for(let k = resiStart; k <= resiEnd; ++k) {
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[chainid + '_' + k]);
+                    }
+                }
 
-               if(Object.keys(ic.hAtoms).length == 0) continue;
+                if(Object.keys(ic.hAtoms).length == 0) continue;
 
-               //let extent = ic.contactCls.getExtent(atomSet);
+                //let extent = ic.contactCls.getExtent(atomSet);
 
-               //let radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
-               //let radius = Math.sqrt(radiusSq);
+                //let radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
+                //let radius = Math.sqrt(radiusSq);
 
-               let center_x_y_z = ic.axesCls.setPc1Axes();
-               let center = center_x_y_z[0];
-               let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
-               let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
-               let angle = new Vector2$1(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
-               if(angle > 180) angle -= 180;
+                let center_x_y_z = ic.axesCls.setPc1Axes();
+                let center = center_x_y_z[0];
+                let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+                let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+                let angle = new Vector2$1(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
+                if(angle > 180) angle -= 180;
 
-               let serial = Object.keys(ic.hAtoms)[0];
-               let atom = ic.atoms[serial];
-               //let shapeid = 0;
+                let serial = Object.keys(ic.hAtoms)[0];
+                let atom = ic.atoms[serial];
+                //let shapeid = 0;
 
-               //let x = me.htmlCls.width2d * (center.x - min_max_center[0][0]) / (min_max_center[1][0] - min_max_center[0][0]);
-               //let y = me.htmlCls.width2d * (center.y - min_max_center[0][1]) / (min_max_center[1][1] - min_max_center[0][1]);
-               center = this.projectTo2d(center);
-               let x = center.x;
-               let y = center.y;
+                //let x = me.htmlCls.width2d * (center.x - min_max_center[0][0]) / (min_max_center[1][0] - min_max_center[0][0]);
+                //let y = me.htmlCls.width2d * (center.y - min_max_center[0][1]) / (min_max_center[1][1] - min_max_center[0][1]);
+                center = this.projectTo2d(center);
+                let x = center.x;
+                let y = center.y;
 
-               if(x < minX) minX = x;
-               if(x > maxX) maxX = x;
-               if(y < minY) minY = y;
-               if(y > maxY) maxY = y;
+                if(x < minX) minX = x;
+                if(x > maxX) maxX = x;
+                if(y < minY) minY = y;
+                if(y > maxY) maxY = y;
 
-               let factor = 0.5;
-               rx = factor * me.htmlCls.width2d * rx / (min_max_center[1][0] - min_max_center[0][0]);
-               ry = factor * me.htmlCls.width2d * ry / (min_max_center[1][1] - min_max_center[0][1]);
+                let factor = 0.5;
+                rx = factor * me.htmlCls.width2d * rx / (min_max_center[1][0] - min_max_center[0][0]);
+                ry = factor * me.htmlCls.width2d * ry / (min_max_center[1][1] - min_max_center[0][1]);
 
-               if(rx > maxR) maxR = rx;
-               if(ry > maxR) maxR = ry;
+                if(rx > maxR) maxR = rx;
+                if(ry > maxR) maxR = ry;
 
-               if(prevDomainName !== undefined) {
-                   linkArray.push('{"source": "' + prevDomainName + '", "target": "' + domainName
-                       + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
-               }
+                if(prevDomainName !== undefined) {
+                    linkArray.push('{"source": "' + prevDomainName + '", "target": "' + domainName
+                        + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
+                }
 
-               itemArray.push({"id":domainName, "from":fromArray + '', "to":toArray + '', "x":x, "y":y, "rx":rx, "ry":ry,
-                 "ang":angle, "c":atom.color.getHexString()});
+                itemArray.push({"id":domainName, "from":fromArray + '', "to":toArray + '', "x":x, "y":y, "rx":rx, "ry":ry,
+                    "ang":angle, "c":atom.color.getHexString()});
 
-               prevDomainName = domainName;
-               prevAtom = atom;
-           }
-       }
+                prevDomainName = domainName;
+                prevAtom = atom;
+            }
+        }
 
-       let offset = maxR + 2;
-       let rangeX = maxX - minX, rangeY = maxY - minY;
+        let offset = maxR + 2;
+        let rangeX = maxX - minX, rangeY = maxY - minY;
 
-       for(let i = 0, il = itemArray.length; i < il; ++i) {
-           let item = itemArray[i];
-           let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
-           let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
+        // 1. scale all domains into the 2D canvas
+        let scaledArray = [];
+        for(let i = 0, il = itemArray.length; i < il; ++i) {
+            let item = itemArray[i];
+            let x = (rangeX < 1) ? 0.5 * me.htmlCls.width2d : (item.x - minX) / rangeX * (me.htmlCls.width2d - 2 * offset) + offset;
+            let y = (rangeY < 1) ? 0.5 * me.htmlCls.width2d : (item.y - minY) / rangeY * (me.htmlCls.width2d - 2 * offset) + offset;
 
-           nodeArray.push('{"id": "' + item.id
-               + '", "from": "' + item.from + '", "to": "' + item.to
-               + '", "x": ' + x.toFixed(0) + ', "y": ' + y.toFixed(0)
-               + ', "rx": ' + item.rx.toFixed(0) + ', "ry": ' + item.ry.toFixed(0)
-               + ', "ang": ' + item.ang.toFixed(0)
-               + ', "c": "' + item.c.toUpperCase() + '"}');
-       }
+            scaledArray.push(Object.assign({}, item, {"x": x, "y": y}));
+        }
 
-       ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        // 2. push the overlapping domain ellipses apart (set ic.bCartoon2dOverlap = true to keep the raw projection)
+        if(!ic.bCartoon2dOverlap) this.removeOverlapEllipse2d(scaledArray, me.htmlCls.width2d);
 
-       ic.node_link = {"node": nodeArray, "link":linkArray, "level": "domain"};
+        // 3. output the nodes
+        for(let i = 0, il = scaledArray.length; i < il; ++i) {
+            let item = scaledArray[i];
 
-       //return {"node": nodeArray, "link":linkArray};
+            nodeArray.push('{"id": "' + item.id
+                + '", "from": "' + item.from + '", "to": "' + item.to
+                + '", "x": ' + item.x.toFixed(0) + ', "y": ' + item.y.toFixed(0)
+                + ', "rx": ' + item.rx.toFixed(0) + ', "ry": ' + item.ry.toFixed(0)
+                + ', "ang": ' + item.ang.toFixed(0)
+                + ', "c": "' + item.c.toUpperCase() + '"}');
+        }
+
+        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+        ic.node_link = {"node": nodeArray, "link":linkArray, "level": "domain"};
+
+        //return {"node": nodeArray, "link":linkArray};
     }
 
     getSelection(idArray, from, to) { let ic = this.icn3d, me = ic.icn3dui;
@@ -149698,27 +149931,27 @@ class Cartoon2d {
         let thisClass = this;
 
         me.myEventCls.onIds("#" + me.pre + "2dctn_chain", "click", async function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           thisClass.initCartoonSvg();
+            e.preventDefault();
+            thisClass.initCartoonSvg();
 
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
-           await ic.cartoon2dCls.draw2Dcartoon('chain');
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            await ic.cartoon2dCls.draw2Dcartoon('chain');
         });
 
         me.myEventCls.onIds("#" + me.pre + "2dctn_domain", "click", async function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           thisClass.initCartoonSvg();
+            e.preventDefault();
+            thisClass.initCartoonSvg();
 
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
-           await ic.cartoon2dCls.draw2Dcartoon('domain');
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            await ic.cartoon2dCls.draw2Dcartoon('domain');
         });
 
         me.myEventCls.onIds("#" + me.pre + "2dctn_secondary", "click", async function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           thisClass.initCartoonSvg();
+            e.preventDefault();
+            thisClass.initCartoonSvg();
 
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
-           await ic.cartoon2dCls.draw2Dcartoon('secondary');
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            await ic.cartoon2dCls.draw2Dcartoon('secondary');
         });
 
         $(document).on("click", "#" + ic.pre + "dl_2dctn .icn3d-ctnode", function(e) { let ic = thisClass.icn3d;
@@ -149802,9 +150035,9 @@ class Cartoon2d {
     }
 
     initCartoonSvg() { let ic = this.icn3d, me = ic.icn3dui;
-       ic.resizeRatioX = 1.0;
-       ic.resizeRatioY = 1.0;
-       $("#" + me.svgid_ct).empty();
+        ic.resizeRatioX = 1.0;
+        ic.resizeRatioY = 1.0;
+        $("#" + me.svgid_ct).empty();
     }
 }
 
@@ -155246,7 +155479,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.54.4';
+    this.REVISION = '3.55.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
